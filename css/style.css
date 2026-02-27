@@ -158,15 +158,3 @@ header p  { font-size:.74rem; color:var(--stone-lt); font-weight:300; }
 .popup-btn-sm.danger { border-color:#e0aaaa; color:#9b2020; }
 .popup-btn-sm.danger:hover { background:#fdf0f0; }
 .popup-close { margin-left:auto; }
-
-/* Nouveau style pour les résultats d'analyse */
-#french-analysis-result {
-    margin-top: 12px;
-    display: none;
-    background: #fff;
-    padding: 12px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    font-size: 0.85rem;
-    line-height: 1.6;
-}
