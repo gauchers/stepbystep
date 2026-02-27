@@ -33,6 +33,7 @@ export function renderTokenized(sentences) {
 
     sentences.forEach(sentence => {
         sentence.forEach(tok => {
+
             if (!tok.isPunct) {
                 const span = document.createElement('span');
                 span.className = 'latin-word';
@@ -43,7 +44,9 @@ export function renderTokenized(sentences) {
                 });
 
                 el.appendChild(span);
+                el.appendChild(document.createTextNode(' '));
             }
+
         });
     });
 }
@@ -51,11 +54,14 @@ export function renderTokenized(sentences) {
 function toggleCase(el) {
     if (el.classList.contains('color-nominatif')) {
         el.className = 'latin-word color-accusatif';
-    } else if (el.classList.contains('color-accusatif')) {
+    } 
+    else if (el.classList.contains('color-accusatif')) {
         el.className = 'latin-word color-verbe';
-    } else if (el.classList.contains('color-verbe')) {
+    } 
+    else if (el.classList.contains('color-verbe')) {
         el.className = 'latin-word';
-    } else {
+    } 
+    else {
         el.className = 'latin-word color-nominatif';
     }
 }
