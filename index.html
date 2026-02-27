@@ -19,13 +19,15 @@
 
 <section id="deposit-section">
     <h2>Texte latin</h2>
-    <textarea id="raw-latin-input" placeholder="Collez votre texte latin ici…">
-Arma virumque cano, Troiae qui primus ab oris Italiam venit.
-    </textarea>
+
+    <textarea 
+        id="raw-latin-input" 
+        placeholder="Collez votre texte latin ici…"
+    >Arma virumque cano, Troiae qui primus ab oris Italiam venit.</textarea>
 
     <div class="dep-btns">
-        <button onclick="depositText()">Déposer le texte</button>
-        <button onclick="resetAll()">↩ Modifier</button>
+        <button id="deposit-btn">Déposer le texte</button>
+        <button id="reset-btn">↩ Modifier</button>
     </div>
 </section>
 
@@ -43,11 +45,15 @@ Arma virumque cano, Troiae qui primus ab oris Italiam venit.
 
     <div class="column">
         <div class="col-title">Proposition de traduction</div>
-        <textarea id="translation-area" placeholder="Saisissez votre traduction ici…"></textarea>
+
+        <textarea 
+            id="translation-area" 
+            placeholder="Saisissez votre traduction ici…"
+        ></textarea>
 
         <div class="translation-actions">
-            <button onclick="analyzeSentence()">🔍 Analyser</button>
-            <button onclick="clearTranslation()">✕ Effacer</button>
+            <button id="analyze-btn">🔍 Analyser</button>
+            <button id="clear-btn">✕ Effacer</button>
         </div>
 
         <div id="french-analysis-result"></div>
@@ -58,4 +64,3 @@ Arma virumque cano, Troiae qui primus ab oris Italiam venit.
 <script type="module" src="js/main.js"></script>
 </body>
 </html>
-
