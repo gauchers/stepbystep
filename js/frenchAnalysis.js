@@ -17,8 +17,11 @@ export function analyzeSentence() {
 
     let html = `<strong>Analyse (Compromise)</strong><br>`;
 
-    if (verbs.length) html += `<strong>Verbes :</strong> ${verbs.join(', ')}<br>`;
-    if (nouns.length) html += `<strong>Noms :</strong> ${nouns.join(', ')}<br>`;
+    if (verbs.length)
+        html += `<strong>Verbes :</strong> ${verbs.join(', ')}<br>`;
+
+    if (nouns.length)
+        html += `<strong>Noms :</strong> ${nouns.join(', ')}<br>`;
 
     if (!verbs.length && !nouns.length)
         html += `<em>Aucune donnée détectée.</em>`;
