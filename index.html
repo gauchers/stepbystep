@@ -7,10 +7,36 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <script type="module">
-    import nlp from 'https://cdn.jsdelivr.net/npm/compromise@14.15.0/+esm';
-    // Pour rendre nlp accessible aux fonctions inline comme onclick,
-    // il faut l'attacher à l'objet window :
-    window.nlp = nlp;
+    import spacy from 'https://cdn.jsdelivr.net/npm/spacy-js@0.1.0/dist/spacy.js';
+    
+    // Charger le modèle français (ceci peut prendre quelques secondes)
+    const nlp = await spacy.load('fr_core_news_sm');
+    
+    // Rendre nlp accessible à votre fonction onclick
+    window.analyzeSentence = async function() {
+        const text = document.getElementById('translation-area').value;
+        const resultDiv = document.getElementById('french-analysis-result');
+        
+        if (!text.trim()) return;
+
+        resultDiv.innerHTML = "Analyse en cours...";
+
+        // Analyse syntaxique
+        const doc = nlp(text);
+        
+        let htmlResult = `
+            <div style="font-family:var(--font-latin); font-size:0.7rem; color:var(--stone); text-transform:uppercase; margin-bottom:8px; border-bottom:1px solid var(--border); padding-bottom:4px;">Analyse Syntaxique (Spacy)</div>
+        `;
+
+        // Exemple : extraire les sujets et les verbes
+        doc.tokens.forEach(token => {
+            if (token.dep === 'nsubj' || token.dep === 'ROOT') {
+                htmlResult += `<p><strong>${token.text}</strong> : ${token.dep} (lemme: ${token.lemma})</p>`;
+            }
+        });
+        
+        resultDiv.innerHTML = htmlResult;
+    };
 </script>
     <style>
 :root {
@@ -657,6 +683,7 @@ function analyzeFrenchTranslation() {
 </script>
 </body>
 </html>
+
 
 
 
