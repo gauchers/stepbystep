@@ -1,0 +1,81 @@
+:root {
+    --ink: #1a1209;
+    --parchment: #fdf6e3;
+    --accent: #8b3a1e;
+    --border: #c9baa0;
+    --nom: #1a3fcc;
+    --acc: #1e7a35;
+    --vrb: #b81414;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--parchment);
+    color: var(--ink);
+}
+
+header {
+    background: var(--ink);
+    color: white;
+    padding: 14px 28px;
+}
+
+h1 {
+    font-family: 'Cormorant Garamond', serif;
+}
+
+#deposit-section {
+    padding: 20px;
+}
+
+textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 8px;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+#main-area {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    height: 70vh;
+}
+
+.column {
+    padding: 20px;
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+}
+
+.column:last-child {
+    border-right: none;
+}
+
+.col-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.latin-word {
+    display: inline-block;
+    margin: 3px;
+    padding: 3px 6px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+}
+
+.color-nominatif { color: var(--nom); border-color: var(--nom); }
+.color-accusatif { color: var(--acc); border-color: var(--acc); }
+.color-verbe { color: var(--vrb); border-color: var(--vrb); }
+
+#french-analysis-result {
+    margin-top: 15px;
+    padding: 10px;
+    border: 1px solid var(--border);
+    background: white;
+    display: none;
+}
