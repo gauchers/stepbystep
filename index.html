@@ -1,217 +1,187 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>JuxtaLatin</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-<script type="module">
-    import spacy from 'https://cdn.jsdelivr.net/npm/spacy-js@0.1.0/dist/spacy.js';
-    
-    // Charger le modèle français (ceci peut prendre quelques secondes)
-    const nlp = await spacy.load('fr_core_news_sm');
-    
-    // Rendre nlp accessible à votre fonction onclick
-    window.analyzeSentence = async function() {
-        const text = document.getElementById('translation-area').value;
-        const resultDiv = document.getElementById('french-analysis-result');
-        
-        if (!text.trim()) return;
-
-        resultDiv.innerHTML = "Analyse en cours...";
-
-        // Analyse syntaxique
-        const doc = nlp(text);
-        
-        let htmlResult = `
-            <div style="font-family:var(--font-latin); font-size:0.7rem; color:var(--stone); text-transform:uppercase; margin-bottom:8px; border-bottom:1px solid var(--border); padding-bottom:4px;">Analyse Syntaxique (Spacy)</div>
-        `;
-
-        // Exemple : extraire les sujets et les verbes
-        doc.tokens.forEach(token => {
-            if (token.dep === 'nsubj' || token.dep === 'ROOT') {
-                htmlResult += `<p><strong>${token.text}</strong> : ${token.dep} (lemme: ${token.lemma})</p>`;
-            }
-        });
-        
-        resultDiv.innerHTML = htmlResult;
-    };
-</script>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>JuxtaLatin - Spacy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
     <style>
-:root {
-    --ink:        #1a1209;
-    --parchment:  #fdf6e3;
-    --parchment2: #f5ead0;
-    --stone:      #9e8f79;
-    --stone-lt:   #d4c9b4;
-    --border:     #c9baa0;
-    --accent:     #8b3a1e;
-    --accent-lt:  #f0ddd6;
-    --nom:  #1a3fcc;
-    --voc:  #1a3fcc;
-    --acc:  #1e7a35;
-    --gen:  #666666;
-    --dat:  #b06000;
-    --vrb:  #b81414;
-    --inf:  #6b1db8;
-    --cco:  #c07800;
-    --csu:  #007a6e;
-    --radius: 6px;
-    --font-latin: 'Cormorant Garamond', Georgia, serif;
-    --font-ui:    'DM Sans', sans-serif;
-}
-*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { font-family:var(--font-ui); background:var(--parchment); color:var(--ink); min-height:100vh; display:flex; flex-direction:column; }
+        :root {
+            --ink:        #1a1209;
+            --parchment:  #fdf6e3;
+            --parchment2: #f5ead0;
+            --stone:      #9e8f79;
+            --stone-lt:   #d4c9b4;
+            --border:     #c9baa0;
+            --accent:     #8b3a1e;
+            --accent-lt:  #f0ddd6;
+            --nom:  #1a3fcc;
+            --voc:  #1a3fcc;
+            --acc:  #1e7a35;
+            --gen:  #666666;
+            --dat:  #b06000;
+            --vrb:  #b81414;
+            --inf:  #6b1db8;
+            --cco:  #c07800;
+            --csu:  #007a6e;
+            --radius: 6px;
+            --font-latin: 'Cormorant Garamond', Georgia, serif;
+            --font-ui:    'DM Sans', sans-serif;
+        }
+        *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+        body { font-family:var(--font-ui); background:var(--parchment); color:var(--ink); min-height:100vh; display:flex; flex-direction:column; }
 
-/* ── Header ── */
-header { background:var(--ink); color:var(--parchment); padding:14px 28px; display:flex; align-items:baseline; gap:14px; border-bottom:3px solid var(--accent); flex-shrink:0; }
-header h1 { font-family:var(--font-latin); font-weight:600; font-size:1.5rem; letter-spacing:.04em; }
-header p  { font-size:.74rem; color:var(--stone-lt); font-weight:300; }
+        /* ── Header ── */
+        header { background:var(--ink); color:var(--parchment); padding:14px 28px; display:flex; align-items:baseline; gap:14px; border-bottom:3px solid var(--accent); flex-shrink:0; }
+        header h1 { font-family:var(--font-latin); font-weight:600; font-size:1.5rem; letter-spacing:.04em; }
+        header p  { font-size:.74rem; color:var(--stone-lt); font-weight:300; }
 
-/* ── Dépôt ── */
-#deposit-section { padding:18px 28px 14px; border-bottom:1px solid var(--border); background:var(--parchment2); flex-shrink:0; }
-#deposit-section h2 { font-family:var(--font-latin); font-size:.9rem; color:var(--stone); font-weight:400; text-transform:uppercase; letter-spacing:.07em; margin-bottom:6px; }
-#raw-latin-input { width:100%; min-height:72px; font-family:var(--font-latin); font-size:1.05rem; line-height:1.7; background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:8px 12px; color:var(--ink); resize:vertical; }
-#raw-latin-input:focus { outline:none; border-color:var(--accent); }
-#raw-latin-input.hidden { display:none; }
-.dep-btns { margin-top:7px; display:flex; gap:8px; }
-#btn-deposit { padding:7px 20px; background:var(--accent); color:#fff; border:none; border-radius:var(--radius); font-family:var(--font-ui); font-size:.84rem; font-weight:500; cursor:pointer; }
-#btn-deposit:hover { background:#6e2e17; }
-#btn-reset { padding:7px 14px; background:transparent; color:var(--stone); border:1px solid var(--border); border-radius:var(--radius); font-size:.8rem; cursor:pointer; display:none; }
-#btn-reset.visible { display:inline-block; }
+        /* ── Dépôt ── */
+        #deposit-section { padding:18px 28px 14px; border-bottom:1px solid var(--border); background:var(--parchment2); flex-shrink:0; }
+        #deposit-section h2 { font-family:var(--font-latin); font-size:.9rem; color:var(--stone); font-weight:400; text-transform:uppercase; letter-spacing:.07em; margin-bottom:6px; }
+        #raw-latin-input { width:100%; min-height:72px; font-family:var(--font-latin); font-size:1.05rem; line-height:1.7; background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:8px 12px; color:var(--ink); resize:vertical; }
+        #raw-latin-input:focus { outline:none; border-color:var(--accent); }
+        #raw-latin-input.hidden { display:none; }
+        .dep-btns { margin-top:7px; display:flex; gap:8px; }
+        #btn-deposit { padding:7px 20px; background:var(--accent); color:#fff; border:none; border-radius:var(--radius); font-family:var(--font-ui); font-size:.84rem; font-weight:500; cursor:pointer; }
+        #btn-deposit:hover { background:#6e2e17; }
+        #btn-reset { padding:7px 14px; background:transparent; color:var(--stone); border:1px solid var(--border); border-radius:var(--radius); font-size:.8rem; cursor:pointer; display:none; }
+        #btn-reset.visible { display:inline-block; }
 
-/* ── Zone principale ── */
-#main-area { display:none; flex:1; overflow:hidden; grid-template-columns:1fr 1fr 1fr; }
-#main-area.visible { display:grid; }
-.column { padding:18px 20px; overflow-y:auto; border-right:1px solid var(--border); display:flex; flex-direction:column; gap:0; }
-.column:last-child { border-right:none; }
-.col-title { font-family:var(--font-latin); font-size:.72rem; color:var(--stone); text-transform:uppercase; letter-spacing:.1em; margin-bottom:12px; display:flex; align-items:center; gap:8px; flex-shrink:0; }
-.col-title::after { content:''; flex:1; height:1px; background:var(--border); }
+        /* ── Zone principale ── */
+        #main-area { display:none; flex:1; overflow:hidden; grid-template-columns:1fr 1fr 1fr; }
+        #main-area.visible { display:grid; }
+        .column { padding:18px 20px; overflow-y:auto; border-right:1px solid var(--border); display:flex; flex-direction:column; gap:0; }
+        .column:last-child { border-right:none; }
+        .col-title { font-family:var(--font-latin); font-size:.72rem; color:var(--stone); text-transform:uppercase; letter-spacing:.1em; margin-bottom:12px; display:flex; align-items:center; gap:8px; flex-shrink:0; }
+        .col-title::after { content:''; flex:1; height:1px; background:var(--border); }
 
-/* ─── COL 1 : texte intégral ─── */
-#full-latin-display { font-family:var(--font-latin); font-size:1.12rem; line-height:2.1; flex:1; }
-.full-word { cursor:pointer; border-bottom:1px dotted transparent; transition:border-color .15s, color .15s; }
-.full-word:hover  { border-bottom-color:var(--accent); color:var(--accent); }
-.full-word.active { border-bottom-color:var(--accent); color:var(--accent); font-weight:600; }
+        /* ─── COL 1 : texte intégral ─── */
+        #full-latin-display { font-family:var(--font-latin); font-size:1.12rem; line-height:2.1; flex:1; }
+        .full-word { cursor:pointer; border-bottom:1px dotted transparent; transition:border-color .15s, color .15s; }
+        .full-word:hover  { border-bottom-color:var(--accent); color:var(--accent); }
+        .full-word.active { border-bottom-color:var(--accent); color:var(--accent); font-weight:600; }
 
-/* ─── COL 2 : tokens ─── */
-#tokenized-display { flex:1; }
-.token-sentence { display:block; margin-bottom:10px; padding-bottom:8px; border-bottom:1px dashed var(--stone-lt); }
-.token-sentence:last-child { border-bottom:none; }
-.latin-word { display:inline-block; font-family:var(--font-latin); font-size:1.08rem; padding:2px 6px; margin:3px 2px; border:1px solid var(--stone-lt); background:#fff; border-radius:4px; cursor:pointer; line-height:1.5; transition:background .15s, border-color .15s; user-select:none; }
-.latin-word:hover    { background:var(--accent-lt); border-color:var(--accent); }
-.latin-word.selected { background:var(--accent-lt); border-color:var(--accent); font-weight:600; }
+        /* ─── COL 2 : tokens ─── */
+        #tokenized-display { flex:1; }
+        .token-sentence { display:block; margin-bottom:10px; padding-bottom:8px; border-bottom:1px dashed var(--stone-lt); }
+        .token-sentence:last-child { border-bottom:none; }
+        .latin-word { display:inline-block; font-family:var(--font-latin); font-size:1.08rem; padding:2px 6px; margin:3px 2px; border:1px solid var(--stone-lt); background:#fff; border-radius:4px; cursor:pointer; line-height:1.5; transition:background .15s, border-color .15s; user-select:none; }
+        .latin-word:hover    { background:var(--accent-lt); border-color:var(--accent); }
+        .latin-word.selected { background:var(--accent-lt); border-color:var(--accent); font-weight:600; }
 
-/* Couleurs grammaticales */
-.color-nominatif { color:var(--nom); border-color:var(--nom); }
-.color-vocatif   { color:var(--voc); border-color:var(--voc); }
-.color-accusatif { color:var(--acc); border-color:var(--acc); }
-.color-genitif   { color:var(--gen); border-color:var(--gen); }
-.color-dat-abl   { color:var(--dat); border-color:var(--dat); }
-.color-verbe     { color:var(--vrb); border-color:var(--vrb); }
-.color-infinitif { color:var(--inf); border-color:var(--inf); font-style:italic; }
-.color-coord  { color:var(--cco); border:2px solid var(--cco); border-radius:12px; padding:1px 8px; }
-.color-subord { color:var(--csu); border:2px solid var(--csu); border-radius:2px;  padding:1px 8px; }
+        /* Couleurs grammaticales */
+        .color-nominatif { color:var(--nom); border-color:var(--nom); }
+        .color-vocatif   { color:var(--voc); border-color:var(--voc); }
+        .color-accusatif { color:var(--acc); border-color:var(--acc); }
+        .color-genitif   { color:var(--gen); border-color:var(--gen); }
+        .color-dat-abl   { color:var(--dat); border-color:var(--dat); }
+        .color-verbe     { color:var(--vrb); border-color:var(--vrb); }
+        .color-infinitif { color:var(--inf); border-color:var(--inf); font-style:italic; }
+        .color-coord  { color:var(--cco); border:2px solid var(--cco); border-radius:12px; padding:1px 8px; }
+        .color-subord { color:var(--csu); border:2px solid var(--csu); border-radius:2px;  padding:1px 8px; }
 
-/* ─── Zone de réordonnancement (dans col 2) ─── */
-#reorder-section { flex-shrink:0; margin-top:14px; border-top:1px solid var(--border); padding-top:12px; }
-.reorder-section-title { font-family:var(--font-latin); font-size:.7rem; color:var(--stone); text-transform:uppercase; letter-spacing:.09em; margin-bottom:8px; }
-.reorder-actions { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:8px; }
-.btn-reorder { padding:5px 10px; font-size:.73rem; border-radius:var(--radius); cursor:pointer; border:1px solid var(--border); background:#fff; font-family:var(--font-ui); transition:all .15s; }
-.btn-reorder:hover { background:var(--parchment2); }
-.btn-reorder.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
-.btn-reorder.primary:hover { background:#6e2e17; }
-.btn-reorder.danger { border-color:#e0aaaa; color:#9b2020; }
-.btn-reorder.danger:hover { background:#fdf0f0; }
-#reorder-zone { min-height:80px; border:2px dashed var(--border); border-radius:var(--radius); padding:8px; display:flex; flex-wrap:wrap; align-content:flex-start; gap:3px; transition:border-color .2s, background .2s; position:relative; }
-#reorder-zone.drag-over { border-color:var(--accent); background:var(--accent-lt); }
-.reorder-empty-hint { color:var(--stone-lt); font-size:.78rem; font-style:italic; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; pointer-events:none; user-select:none; }
-.reorder-break { width:100%; height:0; border-top:1px dashed var(--stone-lt); margin:3px 0; flex-shrink:0; }
-.reorder-token { display:inline-flex; align-items:center; gap:3px; font-family:var(--font-latin); font-size:1rem; padding:2px 6px 2px 3px; margin:2px; border:1px solid var(--stone-lt); background:#fff; border-radius:4px; cursor:grab; line-height:1.5; user-select:none; transition:box-shadow .15s, opacity .15s; }
-.reorder-token:active { cursor:grabbing; }
-.reorder-token.dragging { opacity:.4; }
-.reorder-token .drag-handle { font-size:.65rem; color:var(--stone-lt); }
-.reorder-token:hover { box-shadow:0 2px 6px rgba(0,0,0,.12); }
-.reorder-token.color-nominatif { color:var(--nom); border-color:var(--nom); }
-.reorder-token.color-vocatif   { color:var(--voc); border-color:var(--voc); }
-.reorder-token.color-accusatif { color:var(--acc); border-color:var(--acc); }
-.reorder-token.color-genitif   { color:var(--gen); border-color:var(--gen); }
-.reorder-token.color-dat-abl   { color:var(--dat); border-color:var(--dat); }
-.reorder-token.color-verbe     { color:var(--vrb); border-color:var(--vrb); }
-.reorder-token.color-infinitif { color:var(--inf); border-color:var(--inf); font-style:italic; }
-.reorder-token.color-coord  { color:var(--cco); border:2px solid var(--cco); border-radius:12px; }
-.reorder-token.color-subord { color:var(--csu); border:2px solid var(--csu); border-radius:2px; }
+        /* ─── Zone de réordonnancement (dans col 2) ─── */
+        #reorder-section { flex-shrink:0; margin-top:14px; border-top:1px solid var(--border); padding-top:12px; }
+        .reorder-section-title { font-family:var(--font-latin); font-size:.7rem; color:var(--stone); text-transform:uppercase; letter-spacing:.09em; margin-bottom:8px; }
+        .reorder-actions { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:8px; }
+        .btn-reorder { padding:5px 10px; font-size:.73rem; border-radius:var(--radius); cursor:pointer; border:1px solid var(--border); background:#fff; font-family:var(--font-ui); transition:all .15s; }
+        .btn-reorder:hover { background:var(--parchment2); }
+        .btn-reorder.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+        .btn-reorder.primary:hover { background:#6e2e17; }
+        .btn-reorder.danger { border-color:#e0aaaa; color:#9b2020; }
+        .btn-reorder.danger:hover { background:#fdf0f0; }
+        #reorder-zone { min-height:80px; border:2px dashed var(--border); border-radius:var(--radius); padding:8px; display:flex; flex-wrap:wrap; align-content:flex-start; gap:3px; transition:border-color .2s, background .2s; position:relative; }
+        #reorder-zone.drag-over { border-color:var(--accent); background:var(--accent-lt); }
+        .reorder-empty-hint { color:var(--stone-lt); font-size:.78rem; font-style:italic; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; pointer-events:none; user-select:none; }
+        .reorder-break { width:100%; height:0; border-top:1px dashed var(--stone-lt); margin:3px 0; flex-shrink:0; }
+        .reorder-token { display:inline-flex; align-items:center; gap:3px; font-family:var(--font-latin); font-size:1rem; padding:2px 6px 2px 3px; margin:2px; border:1px solid var(--stone-lt); background:#fff; border-radius:4px; cursor:grab; line-height:1.5; user-select:none; transition:box-shadow .15s, opacity .15s; }
+        .reorder-token:active { cursor:grabbing; }
+        .reorder-token.dragging { opacity:.4; }
+        .reorder-token .drag-handle { font-size:.65rem; color:var(--stone-lt); }
+        .reorder-token:hover { box-shadow:0 2px 6px rgba(0,0,0,.12); }
+        .reorder-token.color-nominatif { color:var(--nom); border-color:var(--nom); }
+        .reorder-token.color-vocatif   { color:var(--voc); border-color:var(--voc); }
+        .reorder-token.color-accusatif { color:var(--acc); border-color:var(--acc); }
+        .reorder-token.color-genitif   { color:var(--gen); border-color:var(--gen); }
+        .reorder-token.color-dat-abl   { color:var(--dat); border-color:var(--dat); }
+        .reorder-token.color-verbe     { color:var(--vrb); border-color:var(--vrb); }
+        .reorder-token.color-infinitif { color:var(--inf); border-color:var(--inf); font-style:italic; }
+        .reorder-token.color-coord  { color:var(--cco); border:2px solid var(--cco); border-radius:12px; }
+        .reorder-token.color-subord { color:var(--csu); border:2px solid var(--csu); border-radius:2px; }
 
-/* ─── COL 3 : traduction libre ─── */
-#col-translation { background:#fafaf7; }
-#translation-hint { font-size:.75rem; color:var(--stone); font-style:italic; margin-bottom:10px; line-height:1.5; flex-shrink:0; }
-#translation-area {
-    flex:1; min-height:200px;
-    font-family:var(--font-latin); font-size:1.1rem; line-height:1.8;
-    background:#fff; border:1px solid var(--border); border-radius:var(--radius);
-    padding:12px 14px; color:var(--ink); resize:none; width:100%;
-    outline:none;
-}
-#translation-area:focus { border-color:var(--accent); }
-.translation-actions { display:flex; gap:6px; margin-top:8px; flex-shrink:0; }
-.btn-trans { padding:5px 12px; font-size:.75rem; border-radius:var(--radius); cursor:pointer; border:1px solid var(--border); background:#fff; font-family:var(--font-ui); transition:all .15s; }
-.btn-trans:hover { background:var(--parchment2); }
-.btn-trans.danger { border-color:#e0aaaa; color:#9b2020; }
-.btn-trans.danger:hover { background:#fdf0f0; }
+        /* ─── COL 3 : traduction libre ─── */
+        #col-translation { background:#fafaf7; }
+        #translation-hint { font-size:.75rem; color:var(--stone); font-style:italic; margin-bottom:10px; line-height:1.5; flex-shrink:0; }
+        #translation-area {
+            flex:1; min-height:200px;
+            font-family:var(--font-latin); font-size:1.1rem; line-height:1.8;
+            background:#fff; border:1px solid var(--border); border-radius:var(--radius);
+            padding:12px 14px; color:var(--ink); resize:none; width:100%;
+            outline:none;
+        }
+        #translation-area:focus { border-color:var(--accent); }
+        .translation-actions { display:flex; gap:6px; margin-top:8px; flex-shrink:0; }
+        .btn-trans { padding:5px 12px; font-size:.75rem; border-radius:var(--radius); cursor:pointer; border:1px solid var(--border); background:#fff; font-family:var(--font-ui); transition:all .15s; }
+        .btn-trans:hover { background:var(--parchment2); }
+        .btn-trans.danger { border-color:#e0aaaa; color:#9b2020; }
+        .btn-trans.danger:hover { background:#fdf0f0; }
 
-/* ─── POPUP ─── */
-.popup-overlay { display:none; position:fixed; inset:0; z-index:200; }
-.popup-overlay.visible { display:block; }
-.popup-box {
-    position:absolute; background:#fff; border:1px solid var(--border);
-    border-radius:var(--radius); box-shadow:0 8px 32px rgba(0,0,0,.2);
-    padding:14px 16px; min-width:240px; max-width:320px; z-index:201;
-}
-.popup-word { font-family:var(--font-latin); font-size:1.1rem; font-weight:600; color:var(--accent); margin-bottom:10px; }
-.popup-section-label { font-size:.68rem; color:var(--stone); text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; margin-top:10px; font-weight:500; }
-.popup-section-label:first-of-type { margin-top:0; }
+        /* ─── POPUP ─── */
+        .popup-overlay { display:none; position:fixed; inset:0; z-index:200; }
+        .popup-overlay.visible { display:block; }
+        .popup-box {
+            position:absolute; background:#fff; border:1px solid var(--border);
+            border-radius:var(--radius); box-shadow:0 8px 32px rgba(0,0,0,.2);
+            padding:14px 16px; min-width:240px; max-width:320px; z-index:201;
+        }
+        .popup-word { font-family:var(--font-latin); font-size:1.1rem; font-weight:600; color:var(--accent); margin-bottom:10px; }
+        .popup-section-label { font-size:.68rem; color:var(--stone); text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; margin-top:10px; font-weight:500; }
+        .popup-section-label:first-of-type { margin-top:0; }
 
-/* grille catégories */
-.popup-case-grid { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:2px; }
-.popup-case-btn { padding:3px 9px; border-radius:20px; border:1px solid var(--border); background:#fff; font-family:var(--font-ui); font-size:.72rem; cursor:pointer; transition:all .15s; color:var(--ink); }
-.popup-case-btn:hover { background:var(--parchment2); }
-.popup-case-btn[data-case="nominatif"].active  { background:var(--nom); color:#fff; border-color:var(--nom); }
-.popup-case-btn[data-case="vocatif"].active    { background:var(--voc); color:#fff; border-color:var(--voc); }
-.popup-case-btn[data-case="accusatif"].active  { background:var(--acc); color:#fff; border-color:var(--acc); }
-.popup-case-btn[data-case="genitif"].active    { background:var(--gen); color:#fff; border-color:var(--gen); }
-.popup-case-btn[data-case="dat-abl"].active    { background:var(--dat); color:#fff; border-color:var(--dat); }
-.popup-case-btn[data-case="verbe"].active      { background:var(--vrb); color:#fff; border-color:var(--vrb); }
-.popup-case-btn[data-case="infinitif"].active  { background:var(--inf); color:#fff; border-color:var(--inf); font-style:italic; }
-.popup-case-btn[data-case="coord"].active      { background:var(--cco); color:#fff; border-color:var(--cco); }
-.popup-case-btn[data-case="subord"].active     { background:var(--csu); color:#fff; border-color:var(--csu); }
+        /* grille catégories */
+        .popup-case-grid { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:2px; }
+        .popup-case-btn { padding:3px 9px; border-radius:20px; border:1px solid var(--border); background:#fff; font-family:var(--font-ui); font-size:.72rem; cursor:pointer; transition:all .15s; color:var(--ink); }
+        .popup-case-btn:hover { background:var(--parchment2); }
+        .popup-case-btn[data-case="nominatif"].active  { background:var(--nom); color:#fff; border-color:var(--nom); }
+        .popup-case-btn[data-case="vocatif"].active    { background:var(--voc); color:#fff; border-color:var(--voc); }
+        .popup-case-btn[data-case="accusatif"].active  { background:var(--acc); color:#fff; border-color:var(--acc); }
+        .popup-case-btn[data-case="genitif"].active    { background:var(--gen); color:#fff; border-color:var(--gen); }
+        .popup-case-btn[data-case="dat-abl"].active    { background:var(--dat); color:#fff; border-color:var(--dat); }
+        .popup-case-btn[data-case="verbe"].active      { background:var(--vrb); color:#fff; border-color:var(--vrb); }
+        .popup-case-btn[data-case="infinitif"].active  { background:var(--inf); color:#fff; border-color:var(--inf); font-style:italic; }
+        .popup-case-btn[data-case="coord"].active      { background:var(--cco); color:#fff; border-color:var(--cco); }
+        .popup-case-btn[data-case="subord"].active     { background:var(--csu); color:#fff; border-color:var(--csu); }
 
-/* liens dans le popup */
-.popup-links { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
-.popup-link { display:inline-block; padding:3px 10px; border-radius:3px; text-decoration:none; font-size:.73rem; font-weight:500; transition:opacity .15s; }
-.popup-link:hover { opacity:.8; }
-.popup-link-gaffiot { background:var(--accent); color:#fff; }
-.popup-link-perseus { background:#1a3a5c; color:#fff; }
+        /* liens dans le popup */
+        .popup-links { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+        .popup-link { display:inline-block; padding:3px 10px; border-radius:3px; text-decoration:none; font-size:.73rem; font-weight:500; transition:opacity .15s; }
+        .popup-link:hover { opacity:.8; }
+        .popup-link-gaffiot { background:var(--accent); color:#fff; }
+        .popup-link-perseus { background:#1a3a5c; color:#fff; }
 
-.popup-actions { display:flex; gap:6px; margin-top:10px; border-top:1px solid var(--border); padding-top:8px; }
-.popup-btn-sm { padding:4px 10px; font-size:.72rem; border-radius:4px; cursor:pointer; border:1px solid var(--border); background:#fff; transition:all .15s; }
-.popup-btn-sm:hover { background:var(--parchment2); }
-.popup-btn-sm.danger { border-color:#e0aaaa; color:#9b2020; }
-.popup-btn-sm.danger:hover { background:#fdf0f0; }
-.popup-close { margin-left:auto; }
+        .popup-actions { display:flex; gap:6px; margin-top:10px; border-top:1px solid var(--border); padding-top:8px; }
+        .popup-btn-sm { padding:4px 10px; font-size:.72rem; border-radius:4px; cursor:pointer; border:1px solid var(--border); background:#fff; transition:all .15s; }
+        .popup-btn-sm:hover { background:var(--parchment2); }
+        .popup-btn-sm.danger { border-color:#e0aaaa; color:#9b2020; }
+        .popup-btn-sm.danger:hover { background:#fdf0f0; }
+        .popup-close { margin-left:auto; }
 
-/* Nouveau style pour les résultats d'analyse */
-#french-analysis-result {
-    margin-top: 12px;
-    display: none;
-    background: #fff;
-    padding: 12px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    font-size: 0.85rem;
-    line-height: 1.6;
-}
-</style>
+        /* Style pour les résultats d'analyse Spacy */
+        #french-analysis-result {
+            margin-top: 12px;
+            display: none;
+            background: #fff;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
 </head>
 <body>
 
@@ -262,7 +232,7 @@ header p  { font-size:.74rem; color:var(--stone-lt); font-weight:300; }
         <textarea id="translation-area" placeholder="Saisissez votre traduction ici…" spellcheck="true"></textarea>
 
         <div class="translation-actions">
-            <button class="btn-trans primary" onclick="analyzeFrenchTranslation()">🔍 Analyser</button>
+            <button class="btn-trans primary" onclick="analyzeSentence()">🔍 Analyser</button>
             <button class="btn-trans danger" onclick="clearTranslation()">✕ Effacer</button>
             <button class="btn-trans" onclick="copyTranslation()">⎘ Copier</button>
         </div>
@@ -311,380 +281,375 @@ header p  { font-size:.74rem; color:var(--stone-lt); font-weight:300; }
     </div>
 </div>
 
-<script>
-/* ══════════════════════════════════
-   ÉTAT
-══════════════════════════════════ */
-let sentences    = [];
-let currentToken = null;   // dernier token double-cliqué (col 2), utilisé pour import phrase
-let popupTarget  = null;   // { el, type: 'full'|'token' }
-let dragSrcEl    = null;
+<script type="module">
+    import spacy from 'https://cdn.jsdelivr.net/npm/spacy-js@0.1.0/dist/spacy.js';
+    
+    let nlpModel = null;
 
-/* ══════════════════════════════════
-   DÉPÔT
-══════════════════════════════════ */
-function depositText() {
-    const input = document.getElementById('raw-latin-input');
-    const text  = input.value.trim();
-    if (!text) return;
-    input.classList.add('hidden');
-    document.getElementById('btn-deposit').style.display = 'none';
-    document.getElementById('btn-reset').classList.add('visible');
-    sentences = parseSentences(text);
-    renderFullText();
-    renderTokenized();
-    document.getElementById('main-area').classList.add('visible');
-    fitHeight();
-}
+    // Rendre la fonction accessible globalement pour le onclick du bouton
+    window.analyzeSentence = async function() {
+        const text = document.getElementById('translation-area').value;
+        const resultDiv = document.getElementById('french-analysis-result');
+        
+        if (!text.trim()) {
+            resultDiv.style.display = 'none';
+            return;
+        }
 
-function fitHeight() {
-    const h = window.innerHeight
-        - document.querySelector('header').offsetHeight
-        - document.getElementById('deposit-section').offsetHeight;
-    document.getElementById('main-area').style.height = h + 'px';
-}
-window.addEventListener('resize', () => {
-    if (document.getElementById('main-area').classList.contains('visible')) fitHeight();
-});
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = "<em>Chargement du modèle français et analyse...</em>";
 
-function resetAll() {
-    document.getElementById('raw-latin-input').classList.remove('hidden');
-    document.getElementById('btn-deposit').style.display = '';
-    document.getElementById('btn-reset').classList.remove('visible');
-    document.getElementById('full-latin-display').innerHTML = '';
-    document.getElementById('tokenized-display').innerHTML  = '';
-    document.getElementById('main-area').classList.remove('visible');
-    clearReorderZone();
-    sentences = []; currentToken = null; popupTarget = null;
-}
-
-/* ══════════════════════════════════
-   PARSING
-══════════════════════════════════ */
-function parseSentences(text) {
-    const chunks = text.split(/(?<=[.?!])\s*/);
-    return chunks.map(chunk => {
-        const parts = chunk.split(/(\s+|[,;:'"«»()\[\]\-—.?!])/).filter(Boolean);
-        return parts
-            .filter(p => !/^\s+$/.test(p))
-            .map(p => ({
-                text: p,
-                isPunct: /^[,;:'"«»()\[\]\-—.?!]$/.test(p),
-                isSentenceEnd: /^[.?!]$/.test(p),
-                grammaticalCase: ''
-            }));
-    }).filter(s => s.length > 0);
-}
-
-/* ══════════════════════════════════
-   COL 1 : texte intégral continu
-   Double-clic → popup Gaffiot uniquement
-══════════════════════════════════ */
-function renderFullText() {
-    const el = document.getElementById('full-latin-display');
-    el.innerHTML = '';
-    sentences.forEach(sentence => {
-        sentence.forEach(tok => {
-            if (tok.isPunct) {
-                el.appendChild(document.createTextNode(tok.text + ' '));
-            } else {
-                const span = document.createElement('span');
-                span.className   = 'full-word';
-                span.textContent = tok.text;
-                span.addEventListener('dblclick', e => { e.preventDefault(); openPopup(span, 'full'); });
-                el.appendChild(span);
-                el.appendChild(document.createTextNode(' '));
+        try {
+            if (!nlpModel) {
+                nlpModel = await spacy.load('fr_core_news_sm');
             }
-        });
-    });
-}
 
-/* ══════════════════════════════════
-   COL 2 : tokens avec sauts de ligne
-   Double-clic → popup couleur + Gaffiot + Perseus
-══════════════════════════════════ */
-function renderTokenized() {
-    const el = document.getElementById('tokenized-display');
-    el.innerHTML = '';
-    sentences.forEach((sentence, si) => {
-        const sentDiv = document.createElement('div');
-        sentDiv.className       = 'token-sentence';
-        sentDiv.dataset.sentIdx = si;
-        sentence.forEach((tok, ti) => {
-            if (tok.isPunct) {
-                sentDiv.appendChild(document.createTextNode(tok.text + ' '));
-            } else {
-                const span = document.createElement('span');
-                span.className       = 'latin-word';
-                span.textContent     = tok.text;
-                span.dataset.sentIdx = si;
-                span.dataset.tokIdx  = ti;
-                if (tok.grammaticalCase) {
-                    span.classList.add('color-' + tok.grammaticalCase);
-                    span.dataset.grammaticalCase = tok.grammaticalCase;
+            const doc = nlpModel(text);
+            
+            let htmlResult = `
+                <div style="font-family:var(--font-latin); font-size:0.7rem; color:var(--stone); text-transform:uppercase; margin-bottom:8px; border-bottom:1px solid var(--border); padding-bottom:4px;">Analyse Syntaxique (Spacy)</div>
+            `;
+
+            // Extraire Sujets (nsubj) et Verbes (ROOT)
+            doc.tokens.forEach(token => {
+                if (token.dep === 'nsubj' || token.dep === 'ROOT') {
+                    let type = token.dep === 'nsubj' ? 'Sujet' : 'Verbe Principal';
+                    htmlResult += `<p><strong>${token.text}</strong> : <span style="color:var(--stone)">${type}</span> (lemme: <em>${token.lemma}</em>)</p>`;
                 }
-                span.addEventListener('dblclick', e => {
-                    e.preventDefault();
-                    currentToken = span;
-                    openPopup(span, 'token');
-                });
-                sentDiv.appendChild(span);
-            }
-        });
-        el.appendChild(sentDiv);
-    });
-}
+            });
+            
+            resultDiv.innerHTML = htmlResult;
 
-/* ══════════════════════════════════
-   POPUP
-══════════════════════════════════ */
-function openPopup(el, type) {
-    popupTarget = { el, type };
-    const word  = el.textContent.trim();
-    const clean = word.toLowerCase().replace(/[^a-z]/gi, '');
+        } catch (error) {
+            console.error(error);
+            resultDiv.innerHTML = "Erreur lors de l'analyse. Vérifiez la console.";
+        }
+    };
+</script>
 
-    document.getElementById('popup-word').textContent = word;
-    document.getElementById('popup-link-gaffiot').href =
-        `https://gaffiot.fr/#${encodeURIComponent(clean)}`;
-    document.getElementById('popup-link-perseus').href =
-        `https://www.perseus.tufts.edu/hopper/morph?l=${encodeURIComponent(clean)}&la=la`;
+<script>
+    /* ══════════════════════════════════
+       ÉTAT
+    ══════════════════════════════════ */
+    let sentences    = [];
+    let currentToken = null;
+    let popupTarget  = null;
+    let dragSrcEl    = null;
 
-    // Col 1 : masquer section catégorie + aide Perseus
-    // Col 2 : tout afficher
-    const showExtra = type === 'token';
-    document.getElementById('popup-color-section').style.display = showExtra ? '' : 'none';
-    document.getElementById('popup-aide-section').style.display  = showExtra ? '' : 'none';
-    document.getElementById('popup-clear-btn').style.display     = showExtra ? '' : 'none';
-
-    if (showExtra) {
-        const activeCase = el.dataset.grammaticalCase || '';
-        document.querySelectorAll('.popup-case-btn').forEach(btn =>
-            btn.classList.toggle('active', btn.dataset.case === activeCase)
-        );
+    /* ══════════════════════════════════
+       DÉPÔT
+    ══════════════════════════════════ */
+    function depositText() {
+        const input = document.getElementById('raw-latin-input');
+        const text  = input.value.trim();
+        if (!text) return;
+        input.classList.add('hidden');
+        document.getElementById('btn-deposit').style.display = 'none';
+        document.getElementById('btn-reset').classList.add('visible');
+        sentences = parseSentences(text);
+        renderFullText();
+        renderTokenized();
+        document.getElementById('main-area').classList.add('visible');
+        fitHeight();
     }
 
-    // Positionnement
-    const overlay = document.getElementById('popup-overlay');
-    const box     = document.getElementById('popup-box');
-    overlay.classList.add('visible');
-    requestAnimationFrame(() => {
-        const rect = el.getBoundingClientRect();
-        let top  = rect.bottom + 8 + window.scrollY;
-        let left = rect.left + window.scrollX;
-        if (left + box.offsetWidth  > window.innerWidth  - 10) left = window.innerWidth  - box.offsetWidth  - 10;
-        if (top  + box.offsetHeight > window.innerHeight + window.scrollY - 10) top = rect.top + window.scrollY - box.offsetHeight - 8;
-        box.style.top  = top  + 'px';
-        box.style.left = left + 'px';
+    function fitHeight() {
+        const h = window.innerHeight
+            - document.querySelector('header').offsetHeight
+            - document.getElementById('deposit-section').offsetHeight;
+        document.getElementById('main-area').style.height = h + 'px';
+    }
+    window.addEventListener('resize', () => {
+        if (document.getElementById('main-area').classList.contains('visible')) fitHeight();
     });
-}
 
-function closePopupOverlay(e) {
-    if (e.target === document.getElementById('popup-overlay')) closePopup();
-}
-function closePopup() {
-    document.getElementById('popup-overlay').classList.remove('visible');
-    popupTarget = null;
-}
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closePopup(); });
+    function resetAll() {
+        document.getElementById('raw-latin-input').classList.remove('hidden');
+        document.getElementById('btn-deposit').style.display = '';
+        document.getElementById('btn-reset').classList.remove('visible');
+        document.getElementById('full-latin-display').innerHTML = '';
+        document.getElementById('tokenized-display').innerHTML  = '';
+        document.getElementById('main-area').classList.remove('visible');
+        clearReorderZone();
+        sentences = []; currentToken = null; popupTarget = null;
+    }
 
-/* ══════════════════════════════════
-   CODE COULEUR (via popup col 2)
-══════════════════════════════════ */
-function popupSetCase(caseName) {
-    if (!popupTarget || popupTarget.type !== 'token') return;
-    const el = popupTarget.el;
-    removeColorClasses(el);
-    if (el.dataset.grammaticalCase === caseName) {
+    /* ══════════════════════════════════
+       PARSING
+    ══════════════════════════════════ */
+    function parseSentences(text) {
+        const chunks = text.split(/(?<=[.?!])\s*/);
+        return chunks.map(chunk => {
+            const parts = chunk.split(/(\s+|[,;:'"«»()\[\]\-—.?!])/).filter(Boolean);
+            return parts
+                .filter(p => !/^\s+$/.test(p))
+                .map(p => ({
+                    text: p,
+                    isPunct: /^[,;:'"«»()\[\]\-—.?!]$/.test(p),
+                    isSentenceEnd: /^[.?!]$/.test(p),
+                    grammaticalCase: ''
+                }));
+        }).filter(s => s.length > 0);
+    }
+
+    /* ══════════════════════════════════
+       COL 1 : texte intégral continu
+    ══════════════════════════════════ */
+    function renderFullText() {
+        const el = document.getElementById('full-latin-display');
+        el.innerHTML = '';
+        sentences.forEach(sentence => {
+            sentence.forEach(tok => {
+                if (tok.isPunct) {
+                    el.appendChild(document.createTextNode(tok.text + ' '));
+                } else {
+                    const span = document.createElement('span');
+                    span.className   = 'full-word';
+                    span.textContent = tok.text;
+                    span.addEventListener('dblclick', e => { e.preventDefault(); openPopup(span, 'full'); });
+                    el.appendChild(span);
+                    el.appendChild(document.createTextNode(' '));
+                }
+            });
+        });
+    }
+
+    /* ══════════════════════════════════
+       COL 2 : tokens avec sauts de ligne
+    ══════════════════════════════════ */
+    function renderTokenized() {
+        const el = document.getElementById('tokenized-display');
+        el.innerHTML = '';
+        sentences.forEach((sentence, si) => {
+            const sentDiv = document.createElement('div');
+            sentDiv.className       = 'token-sentence';
+            sentDiv.dataset.sentIdx = si;
+            sentence.forEach((tok, ti) => {
+                if (tok.isPunct) {
+                    sentDiv.appendChild(document.createTextNode(tok.text + ' '));
+                } else {
+                    const span = document.createElement('span');
+                    span.className       = 'latin-word';
+                    span.textContent     = tok.text;
+                    span.dataset.sentIdx = si;
+                    span.dataset.tokIdx  = ti;
+                    if (tok.grammaticalCase) {
+                        span.classList.add('color-' + tok.grammaticalCase);
+                        span.dataset.grammaticalCase = tok.grammaticalCase;
+                    }
+                    span.addEventListener('dblclick', e => {
+                        e.preventDefault();
+                        currentToken = span;
+                        openPopup(span, 'token');
+                    });
+                    sentDiv.appendChild(span);
+                }
+            });
+            el.appendChild(sentDiv);
+        });
+    }
+
+    /* ══════════════════════════════════
+       POPUP
+    ══════════════════════════════════ */
+    function openPopup(el, type) {
+        popupTarget = { el, type };
+        const word  = el.textContent.trim();
+        const clean = word.toLowerCase().replace(/[^a-z]/gi, '');
+
+        document.getElementById('popup-word').textContent = word;
+        document.getElementById('popup-link-gaffiot').href =
+            `https://gaffiot.fr/#${encodeURIComponent(clean)}`;
+        document.getElementById('popup-link-perseus').href =
+            `https://www.perseus.tufts.edu/hopper/morph?l=${encodeURIComponent(clean)}&la=la`;
+
+        const showExtra = type === 'token';
+        document.getElementById('popup-color-section').style.display = showExtra ? '' : 'none';
+        document.getElementById('popup-aide-section').style.display  = showExtra ? '' : 'none';
+        document.getElementById('popup-clear-btn').style.display     = showExtra ? '' : 'none';
+
+        if (showExtra) {
+            const activeCase = el.dataset.grammaticalCase || '';
+            document.querySelectorAll('.popup-case-btn').forEach(btn =>
+                btn.classList.toggle('active', btn.dataset.case === activeCase)
+            );
+        }
+
+        const overlay = document.getElementById('popup-overlay');
+        const box     = document.getElementById('popup-box');
+        overlay.classList.add('visible');
+        requestAnimationFrame(() => {
+            const rect = el.getBoundingClientRect();
+            let top  = rect.bottom + 8 + window.scrollY;
+            let left = rect.left + window.scrollX;
+            if (left + box.offsetWidth  > window.innerWidth  - 10) left = window.innerWidth  - box.offsetWidth  - 10;
+            if (top  + box.offsetHeight > window.innerHeight + window.scrollY - 10) top = rect.top + window.scrollY - box.offsetHeight - 8;
+            box.style.top  = top  + 'px';
+            box.style.left = left + 'px';
+        });
+    }
+
+    function closePopupOverlay(e) {
+        if (e.target === document.getElementById('popup-overlay')) closePopup();
+    }
+    function closePopup() {
+        document.getElementById('popup-overlay').classList.remove('visible');
+        popupTarget = null;
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closePopup(); });
+
+    /* ══════════════════════════════════
+       CODE COULEUR (via popup col 2)
+    ══════════════════════════════════ */
+    function popupSetCase(caseName) {
+        if (!popupTarget || popupTarget.type !== 'token') return;
+        const el = popupTarget.el;
+        removeColorClasses(el);
+        if (el.dataset.grammaticalCase === caseName) {
+            delete el.dataset.grammaticalCase;
+            updateSentenceData(el, '');
+            document.querySelectorAll('.popup-case-btn').forEach(b => b.classList.remove('active'));
+        } else {
+            el.classList.add('color-' + caseName);
+            el.dataset.grammaticalCase = caseName;
+            updateSentenceData(el, caseName);
+            document.querySelectorAll('.popup-case-btn').forEach(btn =>
+                btn.classList.toggle('active', btn.dataset.case === caseName)
+            );
+        }
+        syncReorderColors();
+    }
+
+    function popupClearCase() {
+        if (!popupTarget || popupTarget.type !== 'token') return;
+        const el = popupTarget.el;
+        removeColorClasses(el);
         delete el.dataset.grammaticalCase;
         updateSentenceData(el, '');
         document.querySelectorAll('.popup-case-btn').forEach(b => b.classList.remove('active'));
-    } else {
-        el.classList.add('color-' + caseName);
-        el.dataset.grammaticalCase = caseName;
-        updateSentenceData(el, caseName);
-        document.querySelectorAll('.popup-case-btn').forEach(btn =>
-            btn.classList.toggle('active', btn.dataset.case === caseName)
-        );
+        syncReorderColors();
     }
-    syncReorderColors();
-}
 
-function popupClearCase() {
-    if (!popupTarget || popupTarget.type !== 'token') return;
-    const el = popupTarget.el;
-    removeColorClasses(el);
-    delete el.dataset.grammaticalCase;
-    updateSentenceData(el, '');
-    document.querySelectorAll('.popup-case-btn').forEach(b => b.classList.remove('active'));
-    syncReorderColors();
-}
-
-function removeColorClasses(el) {
-    [...el.classList].forEach(c => { if (c.startsWith('color-')) el.classList.remove(c); });
-}
-function updateSentenceData(el, caseName) {
-    const si = parseInt(el.dataset.sentIdx);
-    const ti = parseInt(el.dataset.tokIdx);
-    if (!isNaN(si) && !isNaN(ti) && sentences[si]?.[ti])
-        sentences[si][ti].grammaticalCase = caseName;
-}
-
-/* ══════════════════════════════════
-   RÉORDONNANCEMENT (dans col 2)
-══════════════════════════════════ */
-function importAllTokens() {
-    const zone = document.getElementById('reorder-zone');
-    zone.innerHTML = '';
-    sentences.forEach((sentence, si) => {
-        if (si > 0) { const br = document.createElement('div'); br.className = 'reorder-break'; zone.appendChild(br); }
-        sentence.forEach(tok => { if (!tok.isPunct) zone.appendChild(makeReorderToken(tok)); });
-    });
-    updateEmptyHint();
-}
-
-function importSentenceTokens() {
-    if (!currentToken) {
-        alert('Double-cliquez d\'abord sur un token pour indiquer la phrase à importer.');
-        return;
+    function removeColorClasses(el) {
+        [...el.classList].forEach(c => { if (c.startsWith('color-')) el.classList.remove(c); });
     }
-    const si = parseInt(currentToken.dataset.sentIdx);
-    if (isNaN(si) || !sentences[si]) return;
-    const zone = document.getElementById('reorder-zone');
-    zone.innerHTML = '';
-    sentences[si].forEach(tok => { if (!tok.isPunct) zone.appendChild(makeReorderToken(tok)); });
-    updateEmptyHint();
-}
+    function updateSentenceData(el, caseName) {
+        const si = parseInt(el.dataset.sentIdx);
+        const ti = parseInt(el.dataset.tokIdx);
+        if (!isNaN(si) && !isNaN(ti) && sentences[si]?.[ti])
+            sentences[si][ti].grammaticalCase = caseName;
+    }
 
-function makeReorderToken(tok) {
-    const el = document.createElement('span');
-    el.className    = 'reorder-token';
-    el.draggable    = true;
-    el.dataset.text = tok.text;
-    if (tok.grammaticalCase) el.classList.add('color-' + tok.grammaticalCase);
-    el.innerHTML = `<span class="drag-handle">⠿</span>${tok.text}`;
-    el.addEventListener('dragstart', onReorderDragStart);
-    el.addEventListener('dragend',   onReorderDragEnd);
-    el.addEventListener('dragover',  onReorderDragOverToken);
-    el.addEventListener('drop',      onReorderDropOnToken);
-    return el;
-}
+    /* ══════════════════════════════════
+       RÉORDONNANCEMENT (dans col 2)
+    ══════════════════════════════════ */
+    function importAllTokens() {
+        const zone = document.getElementById('reorder-zone');
+        zone.innerHTML = '';
+        sentences.forEach((sentence, si) => {
+            if (si > 0) { const br = document.createElement('div'); br.className = 'reorder-break'; zone.appendChild(br); }
+            sentence.forEach(tok => { if (!tok.isPunct) zone.appendChild(makeReorderToken(tok)); });
+        });
+        updateEmptyHint();
+    }
 
-function clearReorderZone() {
-    document.getElementById('reorder-zone').innerHTML = '';
-    updateEmptyHint();
-}
-
-function syncReorderColors() {
-    document.querySelectorAll('.reorder-token').forEach(rt => {
-        const text = rt.dataset.text;
-        let found  = '';
-        sentences.forEach(s => s.forEach(t => { if (t.text === text && t.grammaticalCase) found = t.grammaticalCase; }));
-        removeColorClasses(rt);
-        if (found) rt.classList.add('color-' + found);
-    });
-}
-
-function updateEmptyHint() {
-    const zone = document.getElementById('reorder-zone');
-    const has  = zone.querySelector('.reorder-token');
-    let hint   = zone.querySelector('.reorder-empty-hint');
-    if (!has) {
-        if (!hint) {
-            hint = document.createElement('span');
-            hint.className   = 'reorder-empty-hint';
-            hint.textContent = 'Importez des tokens ci-dessus';
-            zone.appendChild(hint);
+    function importSentenceTokens() {
+        if (!currentToken) {
+            alert('Double-cliquez d\'abord sur un token pour indiquer la phrase à importer.');
+            return;
         }
-    } else { if (hint) hint.remove(); }
-}
-
-/* Drag & drop */
-function onReorderDragStart(e) { dragSrcEl = this; this.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
-function onReorderDragEnd()    { this.classList.remove('dragging'); document.querySelectorAll('.reorder-token').forEach(t => t.style.outline=''); dragSrcEl = null; }
-function onReorderDragOverToken(e) { e.preventDefault(); if (dragSrcEl && dragSrcEl !== this) this.style.outline = '2px solid var(--accent)'; }
-function onReorderDropOnToken(e) {
-    e.preventDefault(); e.stopPropagation(); this.style.outline = '';
-    if (!dragSrcEl || dragSrcEl === this) return;
-    document.getElementById('reorder-zone').insertBefore(dragSrcEl, this);
-    updateEmptyHint();
-}
-function onDragOver(e)  { e.preventDefault(); document.getElementById('reorder-zone').classList.add('drag-over'); }
-function onDragLeave()  { document.getElementById('reorder-zone').classList.remove('drag-over'); }
-function onDrop(e) {
-    e.preventDefault();
-    document.getElementById('reorder-zone').classList.remove('drag-over');
-    if (dragSrcEl && e.target === document.getElementById('reorder-zone'))
-        document.getElementById('reorder-zone').appendChild(dragSrcEl);
-    document.querySelectorAll('.reorder-token').forEach(t => t.style.outline='');
-    updateEmptyHint();
-}
-
-/* ══════════════════════════════════
-   COL 3 : traduction libre + analyse
-══════════════════════════════════ */
-function clearTranslation() {
-    if (confirm('Effacer la traduction ?')) {
-        document.getElementById('translation-area').value = '';
-        document.getElementById('french-analysis-result').style.display = 'none';
-    }
-}
-function copyTranslation() {
-    const txt = document.getElementById('translation-area').value;
-    if (!txt) return;
-    navigator.clipboard.writeText(txt).then(() => {
-        const btn = event.target;
-        const orig = btn.textContent;
-        btn.textContent = '✓ Copié';
-        setTimeout(() => btn.textContent = orig, 1500);
-    });
-}
-
-// Fonction d'analyse avec Compromise.js
-function analyzeFrenchTranslation() {
-    const text = document.getElementById('translation-area').value;
-    const resultDiv = document.getElementById('french-analysis-result');
-
-    if (!text.trim()) {
-        resultDiv.style.display = 'none';
-        return;
+        const si = parseInt(currentToken.dataset.sentIdx);
+        if (isNaN(si) || !sentences[si]) return;
+        const zone = document.getElementById('reorder-zone');
+        zone.innerHTML = '';
+        sentences[si].forEach(tok => { if (!tok.isPunct) zone.appendChild(makeReorderToken(tok)); });
+        updateEmptyHint();
     }
 
-    resultDiv.style.display = 'block';
-
-    // Compromise.js analyse le texte
-    const doc = nlp(text);
-
-    // Extraction des informations
-    const verbs = doc.verbs().out('array');
-    const nouns = doc.nouns().out('array');
-    const people = doc.people().out('array');
-
-    // Construction de l'affichage
-    let htmlResult = `
-        <div style="font-family:var(--font-latin); font-size:0.7rem; color:var(--stone); text-transform:uppercase; margin-bottom:8px; border-bottom:1px solid var(--border); padding-bottom:4px;">Analyse Morphologique (Compromise)</div>
-    `;
-
-    if (verbs.length > 0) {
-        htmlResult += `<p><strong>Verbes :</strong> <span style="color:var(--vrb); font-weight:500;">${verbs.join(', ')}</span></p>`;
-    }
-    if (nouns.length > 0) {
-        htmlResult += `<p><strong>Noms :</strong> <span style="color:var(--stone);">${nouns.join(', ')}</span></p>`;
-    }
-    if (people.length > 0) {
-        htmlResult += `<p><strong>Personnes :</strong> <span style="color:var(--accent);">${people.join(', ')}</span></p>`;
+    function makeReorderToken(tok) {
+        const el = document.createElement('span');
+        el.className    = 'reorder-token';
+        el.draggable    = true;
+        el.dataset.text = tok.text;
+        if (tok.grammaticalCase) el.classList.add('color-' + tok.grammaticalCase);
+        el.innerHTML = `<span class="drag-handle">⠿</span>${tok.text}`;
+        el.addEventListener('dragstart', onReorderDragStart);
+        el.addEventListener('dragend',   onReorderDragEnd);
+        el.addEventListener('dragover',  onReorderDragOverToken);
+        el.addEventListener('drop',      onReorderDropOnToken);
+        return el;
     }
 
-    if(verbs.length === 0 && nouns.length === 0) {
-        htmlResult += `<p style="font-style:italic; color:var(--stone);">Aucun verbe ou nom détecté.</p>`;
+    function clearReorderZone() {
+        document.getElementById('reorder-zone').innerHTML = '';
+        updateEmptyHint();
     }
 
-    resultDiv.innerHTML = htmlResult;
-}
+    function syncReorderColors() {
+        document.querySelectorAll('.reorder-token').forEach(rt => {
+            const text = rt.dataset.text;
+            let found  = '';
+            sentences.forEach(s => s.forEach(t => { if (t.text === text && t.grammaticalCase) found = t.grammaticalCase; }));
+            removeColorClasses(rt);
+            if (found) rt.classList.add('color-' + found);
+        });
+    }
+
+    function updateEmptyHint() {
+        const zone = document.getElementById('reorder-zone');
+        const has  = zone.querySelector('.reorder-token');
+        let hint   = zone.querySelector('.reorder-empty-hint');
+        if (!has) {
+            if (!hint) {
+                hint = document.createElement('span');
+                hint.className   = 'reorder-empty-hint';
+                hint.textContent = 'Importez des tokens ci-dessus';
+                zone.appendChild(hint);
+            }
+        } else { if (hint) hint.remove(); }
+    }
+
+    /* Drag & drop */
+    function onReorderDragStart(e) { dragSrcEl = this; this.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
+    function onReorderDragEnd()    { this.classList.remove('dragging'); document.querySelectorAll('.reorder-token').forEach(t => t.style.outline=''); dragSrcEl = null; }
+    function onReorderDragOverToken(e) { e.preventDefault(); if (dragSrcEl && dragSrcEl !== this) this.style.outline = '2px solid var(--accent)'; }
+    function onReorderDropOnToken(e) {
+        e.preventDefault(); e.stopPropagation(); this.style.outline = '';
+        if (!dragSrcEl || dragSrcEl === this) return;
+        document.getElementById('reorder-zone').insertBefore(dragSrcEl, this);
+        updateEmptyHint();
+    }
+    function onDragOver(e)  { e.preventDefault(); document.getElementById('reorder-zone').classList.add('drag-over'); }
+    function onDragLeave()  { document.getElementById('reorder-zone').classList.remove('drag-over'); }
+    function onDrop(e) {
+        e.preventDefault();
+        document.getElementById('reorder-zone').classList.remove('drag-over');
+        if (dragSrcEl && e.target === document.getElementById('reorder-zone'))
+            document.getElementById('reorder-zone').appendChild(dragSrcEl);
+        document.querySelectorAll('.reorder-token').forEach(t => t.style.outline='');
+        updateEmptyHint();
+    }
+
+    /* ══════════════════════════════════
+       COL 3 : traduction libre
+    ══════════════════════════════════ */
+    function clearTranslation() {
+        if (confirm('Effacer la traduction ?')) {
+            document.getElementById('translation-area').value = '';
+            document.getElementById('french-analysis-result').style.display = 'none';
+        }
+    }
+    function copyTranslation() {
+        const txt = document.getElementById('translation-area').value;
+        if (!txt) return;
+        navigator.clipboard.writeText(txt).then(() => {
+            const btn = event.target;
+            const orig = btn.textContent;
+            btn.textContent = '✓ Copié';
+            setTimeout(() => btn.textContent = orig, 1500);
+        });
+    }
 </script>
+
 </body>
 </html>
-
-
-
-
-
