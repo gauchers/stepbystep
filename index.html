@@ -282,12 +282,11 @@
 </div>
 
 <script type="module">
-    import spacy from 'https://cdn.jsdelivr.net/npm/spacy-js@0.1.0/dist/spacy.js';
+    // Importation de Compromise depuis le CDN moderne
+    import nlp from 'https://cdn.jsdelivr.net/npm/compromise@14.15.0/+esm';
     
-    let nlpModel = null;
-
-    // Rendre la fonction accessible globalement pour le onclick du bouton
-    window.analyzeSentence = async function() {
+    // Rendre nlp accessible à la fonction onclick
+    window.analyzeSentence = function() {
         const text = document.getElementById('translation-area').value;
         const resultDiv = document.getElementById('french-analysis-result');
         
@@ -297,33 +296,29 @@
         }
 
         resultDiv.style.display = 'block';
-        resultDiv.innerHTML = "<em>Chargement du modèle français et analyse...</em>";
 
-        try {
-            if (!nlpModel) {
-                nlpModel = await spacy.load('fr_core_news_sm');
-            }
+        // Analyse avec Compromise
+        const doc = nlp(text);
+        
+        // Extraction des informations
+        const verbs = doc.verbs().out('array');
+        const nouns = doc.nouns().out('array');
+        const people = doc.people().out('array');
 
-            const doc = nlpModel(text);
-            
-            let htmlResult = `
-                <div style="font-family:var(--font-latin); font-size:0.7rem; color:var(--stone); text-transform:uppercase; margin-bottom:8px; border-bottom:1px solid var(--border); padding-bottom:4px;">Analyse Syntaxique (Spacy)</div>
-            `;
-
-            // Extraire Sujets (nsubj) et Verbes (ROOT)
-            doc.tokens.forEach(token => {
-                if (token.dep === 'nsubj' || token.dep === 'ROOT') {
-                    let type = token.dep === 'nsubj' ? 'Sujet' : 'Verbe Principal';
-                    htmlResult += `<p><strong>${token.text}</strong> : <span style="color:var(--stone)">${type}</span> (lemme: <em>${token.lemma}</em>)</p>`;
-                }
-            });
-            
-            resultDiv.innerHTML = htmlResult;
-
-        } catch (error) {
-            console.error(error);
-            resultDiv.innerHTML = "Erreur lors de l'analyse. Vérifiez la console.";
+        // Construction de l'affichage
+        let htmlResult = `
+            <div style="font-family:var(--font-latin); font-size:0.7rem; color:var(--stone); text-transform:uppercase; margin-bottom:8px; border-bottom:1px solid var(--border); padding-bottom:4px;">Analyse Morphologique (Compromise)</div>
+        `;
+        
+        if (verbs.length > 0) htmlResult += `<p><strong>Verbes :</strong> ${verbs.join(', ')}</p>`;
+        if (nouns.length > 0) htmlResult += `<p><strong>Noms :</strong> ${nouns.join(', ')}</p>`;
+        if (people.length > 0) htmlResult += `<p><strong>Personnes :</strong> ${people.join(', ')}</p>`;
+        
+        if (verbs.length === 0 && nouns.length === 0 && people.length === 0) {
+            htmlResult += `<p><em>Aucune donnée trouvée.</em></p>`;
         }
+        
+        resultDiv.innerHTML = htmlResult;
     };
 </script>
 
@@ -653,3 +648,4 @@
 
 </body>
 </html>
+
