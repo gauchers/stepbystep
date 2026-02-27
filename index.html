@@ -1,66 +1,441 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>JuxtaLatin</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com"/>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>JuxtaLatin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/style.css"/>
 </head>
 <body>
 
 <header>
     <h1>JuxtaLatin</h1>
-    <p>Analyse morphologique & code couleur grammatical</p>
+    <p>Analyse morphologique &amp; code couleur grammatical</p>
 </header>
 
 <section id="deposit-section">
     <h2>Texte latin</h2>
-
-    <textarea 
-        id="raw-latin-input" 
-        placeholder="Collez votre texte latin ici…"
-    >Arma virumque cano, Troiae qui primus ab oris Italiam venit.</textarea>
-
+    <textarea id="raw-latin-input" placeholder="Collez votre texte latin ici…">Arma virumque cano, Troiae qui primus ab oris Italiam, fato profugus, Lavinaque venit litora.</textarea>
     <div class="dep-btns">
-        <button id="deposit-btn">Déposer le texte</button>
-        <button id="reset-btn">↩ Modifier</button>
+        <button id="btn-deposit" onclick="depositText()">Déposer le texte</button>
+        <button id="btn-reset"   onclick="resetAll()">↩ Modifier</button>
     </div>
 </section>
 
 <div id="main-area">
 
+    <!-- ═══ COL 1 : texte intégral ═══ -->
     <div class="column">
         <div class="col-title">Texte intégral</div>
         <div id="full-latin-display"></div>
     </div>
 
+    <!-- ═══ COL 2 : tokens + code couleur + réordonnancement ═══ -->
     <div class="column">
-        <div class="col-title">Analyse & code couleur</div>
+        <div class="col-title">Analyse &amp; code couleur</div>
         <div id="tokenized-display"></div>
+
+        <!-- Réordonnancement intégré dans col 2 -->
+        <div id="reorder-section">
+            <div class="reorder-section-title">Réordonnancement</div>
+            <div class="reorder-actions">
+                <button class="btn-reorder primary" onclick="importAllTokens()">⊕ Tous</button>
+                <button class="btn-reorder"         onclick="importSentenceTokens()">⊕ Phrase sélectionnée</button>
+                <button class="btn-reorder danger"  onclick="clearReorderZone()">✕ Vider</button>
+            </div>
+            <div id="reorder-zone"
+                 ondragover="onDragOver(event)"
+                 ondrop="onDrop(event)"
+                 ondragleave="onDragLeave(event)">
+                <span class="reorder-empty-hint">Importez des tokens ci-dessus</span>
+            </div>
+        </div>
     </div>
 
-    <div class="column">
+    <!-- ═══ COL 3 : traduction libre ═══ -->
+    <div class="column" id="col-translation">
         <div class="col-title">Proposition de traduction</div>
-
-        <textarea 
-            id="translation-area" 
-            placeholder="Saisissez votre traduction ici…"
-        ></textarea>
-
+        <p id="translation-hint">Zone de saisie libre pour votre traduction.</p>
+        <textarea id="translation-area" placeholder="Saisissez votre traduction ici…" spellcheck="true"></textarea>
         <div class="translation-actions">
-            <button id="analyze-btn">🔍 Analyser</button>
-            <button id="clear-btn">✕ Effacer</button>
+            <button class="btn-trans danger" onclick="clearTranslation()">✕ Effacer</button>
+            <button class="btn-trans" onclick="copyTranslation()">⎘ Copier</button>
         </div>
-
-        <div id="french-analysis-result"></div>
     </div>
 
 </div>
 
-<script type="module" src="js/main.js"></script>
+<!-- ═══════════════════════════════════════
+     POPUP PARTAGÉ
+═══════════════════════════════════════ -->
+<div class="popup-overlay" id="popup-overlay" onclick="closePopupOverlay(event)">
+    <div class="popup-box" id="popup-box" onclick="event.stopPropagation()">
+
+        <div class="popup-word" id="popup-word"></div>
+
+        <!-- Catégorie grammaticale — col 2 seulement -->
+        <div id="popup-color-section">
+            <div class="popup-section-label">Catégorie grammaticale</div>
+            <div class="popup-case-grid">
+                <button class="popup-case-btn" data-case="nominatif"  onclick="popupSetCase('nominatif')">Nominatif</button>
+                <button class="popup-case-btn" data-case="vocatif"    onclick="popupSetCase('vocatif')">Vocatif</button>
+                <button class="popup-case-btn" data-case="accusatif"  onclick="popupSetCase('accusatif')">Accusatif</button>
+                <button class="popup-case-btn" data-case="genitif"    onclick="popupSetCase('genitif')">Génitif</button>
+                <button class="popup-case-btn" data-case="dat-abl"    onclick="popupSetCase('dat-abl')">Datif / Ablatif</button>
+                <button class="popup-case-btn" data-case="verbe"      onclick="popupSetCase('verbe')">Verbe conj.</button>
+                <button class="popup-case-btn" data-case="infinitif"  onclick="popupSetCase('infinitif')">Infinitif</button>
+                <button class="popup-case-btn" data-case="coord"      onclick="popupSetCase('coord')">Conj. coord.</button>
+                <button class="popup-case-btn" data-case="subord"     onclick="popupSetCase('subord')">Conj. subord.</button>
+            </div>
+        </div>
+
+        <!-- Dictionnaire — col 1 : Gaffiot seulement / col 2 : Gaffiot + Perseus -->
+        <div class="popup-section-label">Dictionnaire</div>
+        <div class="popup-links">
+            <a class="popup-link popup-link-gaffiot" id="popup-link-gaffiot" href="#" target="_blank">Gaffiot ↗</a>
+        </div>
+
+        <!-- Aide morphologique — col 2 seulement -->
+        <div id="popup-aide-section">
+            <div class="popup-section-label">Aide</div>
+            <div class="popup-links">
+                <a class="popup-link popup-link-perseus" id="popup-link-perseus" href="#" target="_blank">Perseus Morpheus ↗</a>
+            </div>
+        </div>
+
+        <div class="popup-actions">
+            <button class="popup-btn-sm danger" id="popup-clear-btn" onclick="popupClearCase()">✕ Effacer couleur</button>
+            <button class="popup-btn-sm popup-close" onclick="closePopup()">Fermer</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ══════════════════════════════════
+   ÉTAT
+══════════════════════════════════ */
+let sentences    = [];
+let currentToken = null;   // dernier token double-cliqué (col 2), utilisé pour import phrase
+let popupTarget  = null;   // { el, type: 'full'|'token' }
+let dragSrcEl    = null;
+
+/* ══════════════════════════════════
+   DÉPÔT
+══════════════════════════════════ */
+function depositText() {
+    const input = document.getElementById('raw-latin-input');
+    const text  = input.value.trim();
+    if (!text) return;
+    input.classList.add('hidden');
+    document.getElementById('btn-deposit').style.display = 'none';
+    document.getElementById('btn-reset').classList.add('visible');
+    sentences = parseSentences(text);
+    renderFullText();
+    renderTokenized();
+    document.getElementById('main-area').classList.add('visible');
+    fitHeight();
+}
+
+function fitHeight() {
+    const h = window.innerHeight
+        - document.querySelector('header').offsetHeight
+        - document.getElementById('deposit-section').offsetHeight;
+    document.getElementById('main-area').style.height = h + 'px';
+}
+window.addEventListener('resize', () => {
+    if (document.getElementById('main-area').classList.contains('visible')) fitHeight();
+});
+
+function resetAll() {
+    document.getElementById('raw-latin-input').classList.remove('hidden');
+    document.getElementById('btn-deposit').style.display = '';
+    document.getElementById('btn-reset').classList.remove('visible');
+    document.getElementById('full-latin-display').innerHTML = '';
+    document.getElementById('tokenized-display').innerHTML  = '';
+    document.getElementById('main-area').classList.remove('visible');
+    clearReorderZone();
+    sentences = []; currentToken = null; popupTarget = null;
+}
+
+/* ══════════════════════════════════
+   PARSING
+══════════════════════════════════ */
+function parseSentences(text) {
+    const chunks = text.split(/(?<=[.?!])\s*/);
+    return chunks.map(chunk => {
+        const parts = chunk.split(/(\s+|[,;:'"«»()\[\]\-—.?!])/).filter(Boolean);
+        return parts
+            .filter(p => !/^\s+$/.test(p))
+            .map(p => ({
+                text: p,
+                isPunct: /^[,;:'"«»()\[\]\-—.?!]$/.test(p),
+                isSentenceEnd: /^[.?!]$/.test(p),
+                grammaticalCase: ''
+            }));
+    }).filter(s => s.length > 0);
+}
+
+/* ══════════════════════════════════
+   COL 1 : texte intégral continu
+   Double-clic → popup Gaffiot uniquement
+══════════════════════════════════ */
+function renderFullText() {
+    const el = document.getElementById('full-latin-display');
+    el.innerHTML = '';
+    sentences.forEach(sentence => {
+        sentence.forEach(tok => {
+            if (tok.isPunct) {
+                el.appendChild(document.createTextNode(tok.text + ' '));
+            } else {
+                const span = document.createElement('span');
+                span.className   = 'full-word';
+                span.textContent = tok.text;
+                span.addEventListener('dblclick', e => { e.preventDefault(); openPopup(span, 'full'); });
+                el.appendChild(span);
+                el.appendChild(document.createTextNode(' '));
+            }
+        });
+    });
+}
+
+/* ══════════════════════════════════
+   COL 2 : tokens avec sauts de ligne
+   Double-clic → popup couleur + Gaffiot + Perseus
+══════════════════════════════════ */
+function renderTokenized() {
+    const el = document.getElementById('tokenized-display');
+    el.innerHTML = '';
+    sentences.forEach((sentence, si) => {
+        const sentDiv = document.createElement('div');
+        sentDiv.className       = 'token-sentence';
+        sentDiv.dataset.sentIdx = si;
+        sentence.forEach((tok, ti) => {
+            if (tok.isPunct) {
+                sentDiv.appendChild(document.createTextNode(tok.text + ' '));
+            } else {
+                const span = document.createElement('span');
+                span.className       = 'latin-word';
+                span.textContent     = tok.text;
+                span.dataset.sentIdx = si;
+                span.dataset.tokIdx  = ti;
+                if (tok.grammaticalCase) {
+                    span.classList.add('color-' + tok.grammaticalCase);
+                    span.dataset.grammaticalCase = tok.grammaticalCase;
+                }
+                span.addEventListener('dblclick', e => {
+                    e.preventDefault();
+                    currentToken = span;
+                    openPopup(span, 'token');
+                });
+                sentDiv.appendChild(span);
+            }
+        });
+        el.appendChild(sentDiv);
+    });
+}
+
+/* ══════════════════════════════════
+   POPUP
+══════════════════════════════════ */
+function openPopup(el, type) {
+    popupTarget = { el, type };
+    const word  = el.textContent.trim();
+    const clean = word.toLowerCase().replace(/[^a-z]/gi, '');
+
+    document.getElementById('popup-word').textContent = word;
+    document.getElementById('popup-link-gaffiot').href =
+        `https://gaffiot.fr/#${encodeURIComponent(clean)}`;
+    document.getElementById('popup-link-perseus').href =
+        `https://www.perseus.tufts.edu/hopper/morph?l=${encodeURIComponent(clean)}&la=la`;
+
+    // Col 1 : masquer section catégorie + aide Perseus
+    // Col 2 : tout afficher
+    const showExtra = type === 'token';
+    document.getElementById('popup-color-section').style.display = showExtra ? '' : 'none';
+    document.getElementById('popup-aide-section').style.display  = showExtra ? '' : 'none';
+    document.getElementById('popup-clear-btn').style.display     = showExtra ? '' : 'none';
+
+    if (showExtra) {
+        const activeCase = el.dataset.grammaticalCase || '';
+        document.querySelectorAll('.popup-case-btn').forEach(btn =>
+            btn.classList.toggle('active', btn.dataset.case === activeCase)
+        );
+    }
+
+    // Positionnement
+    const overlay = document.getElementById('popup-overlay');
+    const box     = document.getElementById('popup-box');
+    overlay.classList.add('visible');
+    requestAnimationFrame(() => {
+        const rect = el.getBoundingClientRect();
+        let top  = rect.bottom + 8 + window.scrollY;
+        let left = rect.left + window.scrollX;
+        if (left + box.offsetWidth  > window.innerWidth  - 10) left = window.innerWidth  - box.offsetWidth  - 10;
+        if (top  + box.offsetHeight > window.innerHeight + window.scrollY - 10) top = rect.top + window.scrollY - box.offsetHeight - 8;
+        box.style.top  = top  + 'px';
+        box.style.left = left + 'px';
+    });
+}
+
+function closePopupOverlay(e) {
+    if (e.target === document.getElementById('popup-overlay')) closePopup();
+}
+function closePopup() {
+    document.getElementById('popup-overlay').classList.remove('visible');
+    popupTarget = null;
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePopup(); });
+
+/* ══════════════════════════════════
+   CODE COULEUR (via popup col 2)
+══════════════════════════════════ */
+function popupSetCase(caseName) {
+    if (!popupTarget || popupTarget.type !== 'token') return;
+    const el = popupTarget.el;
+    removeColorClasses(el);
+    if (el.dataset.grammaticalCase === caseName) {
+        delete el.dataset.grammaticalCase;
+        updateSentenceData(el, '');
+        document.querySelectorAll('.popup-case-btn').forEach(b => b.classList.remove('active'));
+    } else {
+        el.classList.add('color-' + caseName);
+        el.dataset.grammaticalCase = caseName;
+        updateSentenceData(el, caseName);
+        document.querySelectorAll('.popup-case-btn').forEach(btn =>
+            btn.classList.toggle('active', btn.dataset.case === caseName)
+        );
+    }
+    syncReorderColors();
+}
+
+function popupClearCase() {
+    if (!popupTarget || popupTarget.type !== 'token') return;
+    const el = popupTarget.el;
+    removeColorClasses(el);
+    delete el.dataset.grammaticalCase;
+    updateSentenceData(el, '');
+    document.querySelectorAll('.popup-case-btn').forEach(b => b.classList.remove('active'));
+    syncReorderColors();
+}
+
+function removeColorClasses(el) {
+    [...el.classList].forEach(c => { if (c.startsWith('color-')) el.classList.remove(c); });
+}
+function updateSentenceData(el, caseName) {
+    const si = parseInt(el.dataset.sentIdx);
+    const ti = parseInt(el.dataset.tokIdx);
+    if (!isNaN(si) && !isNaN(ti) && sentences[si]?.[ti])
+        sentences[si][ti].grammaticalCase = caseName;
+}
+
+/* ══════════════════════════════════
+   RÉORDONNANCEMENT (dans col 2)
+══════════════════════════════════ */
+function importAllTokens() {
+    const zone = document.getElementById('reorder-zone');
+    zone.innerHTML = '';
+    sentences.forEach((sentence, si) => {
+        if (si > 0) { const br = document.createElement('div'); br.className = 'reorder-break'; zone.appendChild(br); }
+        sentence.forEach(tok => { if (!tok.isPunct) zone.appendChild(makeReorderToken(tok)); });
+    });
+    updateEmptyHint();
+}
+
+function importSentenceTokens() {
+    if (!currentToken) {
+        alert('Double-cliquez d\'abord sur un token pour indiquer la phrase à importer.');
+        return;
+    }
+    const si = parseInt(currentToken.dataset.sentIdx);
+    if (isNaN(si) || !sentences[si]) return;
+    const zone = document.getElementById('reorder-zone');
+    zone.innerHTML = '';
+    sentences[si].forEach(tok => { if (!tok.isPunct) zone.appendChild(makeReorderToken(tok)); });
+    updateEmptyHint();
+}
+
+function makeReorderToken(tok) {
+    const el = document.createElement('span');
+    el.className    = 'reorder-token';
+    el.draggable    = true;
+    el.dataset.text = tok.text;
+    if (tok.grammaticalCase) el.classList.add('color-' + tok.grammaticalCase);
+    el.innerHTML = `<span class="drag-handle">⠿</span>${tok.text}`;
+    el.addEventListener('dragstart', onReorderDragStart);
+    el.addEventListener('dragend',   onReorderDragEnd);
+    el.addEventListener('dragover',  onReorderDragOverToken);
+    el.addEventListener('drop',      onReorderDropOnToken);
+    return el;
+}
+
+function clearReorderZone() {
+    document.getElementById('reorder-zone').innerHTML = '';
+    updateEmptyHint();
+}
+
+function syncReorderColors() {
+    document.querySelectorAll('.reorder-token').forEach(rt => {
+        const text = rt.dataset.text;
+        let found  = '';
+        sentences.forEach(s => s.forEach(t => { if (t.text === text && t.grammaticalCase) found = t.grammaticalCase; }));
+        removeColorClasses(rt);
+        if (found) rt.classList.add('color-' + found);
+    });
+}
+
+function updateEmptyHint() {
+    const zone = document.getElementById('reorder-zone');
+    const has  = zone.querySelector('.reorder-token');
+    let hint   = zone.querySelector('.reorder-empty-hint');
+    if (!has) {
+        if (!hint) {
+            hint = document.createElement('span');
+            hint.className   = 'reorder-empty-hint';
+            hint.textContent = 'Importez des tokens ci-dessus';
+            zone.appendChild(hint);
+        }
+    } else { if (hint) hint.remove(); }
+}
+
+/* Drag & drop */
+function onReorderDragStart(e) { dragSrcEl = this; this.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
+function onReorderDragEnd()    { this.classList.remove('dragging'); document.querySelectorAll('.reorder-token').forEach(t => t.style.outline=''); dragSrcEl = null; }
+function onReorderDragOverToken(e) { e.preventDefault(); if (dragSrcEl && dragSrcEl !== this) this.style.outline = '2px solid var(--accent)'; }
+function onReorderDropOnToken(e) {
+    e.preventDefault(); e.stopPropagation(); this.style.outline = '';
+    if (!dragSrcEl || dragSrcEl === this) return;
+    document.getElementById('reorder-zone').insertBefore(dragSrcEl, this);
+    updateEmptyHint();
+}
+function onDragOver(e)  { e.preventDefault(); document.getElementById('reorder-zone').classList.add('drag-over'); }
+function onDragLeave()  { document.getElementById('reorder-zone').classList.remove('drag-over'); }
+function onDrop(e) {
+    e.preventDefault();
+    document.getElementById('reorder-zone').classList.remove('drag-over');
+    if (dragSrcEl && e.target === document.getElementById('reorder-zone'))
+        document.getElementById('reorder-zone').appendChild(dragSrcEl);
+    document.querySelectorAll('.reorder-token').forEach(t => t.style.outline='');
+    updateEmptyHint();
+}
+
+/* ══════════════════════════════════
+   COL 3 : traduction libre
+══════════════════════════════════ */
+function clearTranslation() {
+    if (confirm('Effacer la traduction ?')) document.getElementById('translation-area').value = '';
+}
+function copyTranslation() {
+    const txt = document.getElementById('translation-area').value;
+    if (!txt) return;
+    navigator.clipboard.writeText(txt).then(() => {
+        const btn = event.target;
+        const orig = btn.textContent;
+        btn.textContent = '✓ Copié';
+        setTimeout(() => btn.textContent = orig, 1500);
+    });
+}
+</script>
 </body>
 </html>
