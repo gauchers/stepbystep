@@ -6,7 +6,12 @@
 <title>JuxtaLatin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-<script type="module"> import compromise from 'https://cdn.jsdelivr.net/npm/compromise@14.15.0/+esm' </script>
+<script type="module">
+    import nlp from 'https://cdn.jsdelivr.net/npm/compromise@14.15.0/+esm';
+    // Pour rendre nlp accessible aux fonctions inline comme onclick,
+    // il faut l'attacher à l'objet window :
+    window.nlp = nlp;
+</script>
     <style>
 :root {
     --ink:        #1a1209;
@@ -652,6 +657,7 @@ function analyzeFrenchTranslation() {
 </script>
 </body>
 </html>
+
 
 
 
