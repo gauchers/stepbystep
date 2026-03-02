@@ -36,6 +36,8 @@
     <!-- COL 1 : tokenisation + code couleur -->
     <div class="column">
         <div class="col-title">Tokenisation — Code couleur</div>
+                <p id="translation-hint">Double-cliquez sur un mot pour choisir le code couleur à appliquer.</p>
+
         <div id="tokenized-display"></div>
         <div id="color-legend">
             <span class="leg" style="color:var(--nom);border-color:var(--nom)">Nominatif</span>
@@ -53,7 +55,7 @@
     <!-- COL 2 : juxtalatin -->
     <div class="column" id="col-juxta">
         <div class="col-title">Juxtalatin latin–français</div>
-        <p class="juxta-hint">Entrez chaque unité latine face à sa traduction littérale. <br>Cliquez sur <strong>+ Ajouter</strong> pour une nouvelle ligne.</p>
+        <p class="juxta-hint">Entrez chaque unité latine face à sa traduction littérale. <br>Cliquez sur <strong>+ Ajouter</strong> pour une nouvelle ligne.</p><p>Conservez de préférence une ligne pour un groupe de mots sans utiliser le saut de paragraphe.</p>
         <div id="juxta-pairs"></div>
         <button id="btn-add-pair" onclick="addJuxtaPair()">+ Ajouter une ligne</button>
     </div>
