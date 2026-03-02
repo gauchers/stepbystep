@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>JuxtaLatin</title>
+<title>Step by Step - Bac à sable</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="../css/style_bac_a_sable.css"/>
@@ -11,8 +11,8 @@
 <body>
 
 <header>
-    <h1>JuxtaLatin</h1>
-    <p>Analyse morphologique &amp; code couleur grammatical</p>
+    <h1>Step by Step</h1>
+    <p>Analyse morphologique, code couleur grammatical, traduction</p>
 </header>
 
 <section id="deposit-section">
@@ -29,17 +29,20 @@
     <!-- ═══ COL 1 : texte intégral ═══ -->
     <div class="column">
         <div class="col-title">Texte intégral</div>
+                            <p id="translation-hint">Double-cliquez sur un mot pour accéder aux entrées Gaffiot possibles.</p>
         <div id="full-latin-display"></div>
     </div>
 
     <!-- ═══ COL 2 : tokens + code couleur + réordonnancement ═══ -->
     <div class="column">
         <div class="col-title">Analyse &amp; code couleur</div>
+        <p id="translation-hint">Double-cliquez sur un token et choisissez son cas. Une correction partielle vous est fournie via les lien Perseus Morpheus.</p>
         <div id="tokenized-display"></div>
 
         <!-- Réordonnancement intégré dans col 2 -->
         <div id="reorder-section">
             <div class="reorder-section-title">Réordonnancement</div>
+                    <p id="translation-hint">Aide à la traduction, permet de modifier l'ordre des mots latins.</p>
             <div class="reorder-actions">
                 <button class="btn-reorder primary" onclick="importAllTokens()">⊕ Tous</button>
                 <button class="btn-reorder"         onclick="importSentenceTokens()">⊕ Phrase sélectionnée</button>
