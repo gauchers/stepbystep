@@ -3,439 +3,229 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>JuxtaLatin</title>
+<title>Step by Step — Latin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="css/style.css"/>
+<style>
+:root {
+    --ink:        #1a1209;
+    --parchment:  #fdf6e3;
+    --parchment2: #f5ead0;
+    --stone:      #9e8f79;
+    --stone-lt:   #d4c9b4;
+    --border:     #c9baa0;
+    --accent:     #8b3a1e;
+    --accent-lt:  #f0ddd6;
+    --sand:       #2a1e0c;     /* bac à sable */
+    --teacher:    #8b3a1e;     /* enseignant = accent */
+    --student:    #1a5c3a;     /* étudiant = vert */
+    --corr:       #1a3a5c;     /* corrigé = bleu */
+    --font-latin: 'Cormorant Garamond', Georgia, serif;
+    --font-ui:    'DM Sans', sans-serif;
+}
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+html, body { height:100%; }
+body {
+    font-family:var(--font-ui);
+    background:var(--parchment);
+    color:var(--ink);
+    display:flex; flex-direction:column;
+    min-height:100vh;
+}
+
+/* ── FOND TEXTURÉ subtil ── */
+body::before {
+    content:'';
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background-image:
+        radial-gradient(ellipse 60% 40% at 20% 80%, rgba(139,58,30,.06) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 80% 20%, rgba(26,58,92,.05) 0%, transparent 60%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
+}
+
+/* ── HEADER ── */
+header {
+    position:relative; z-index:1;
+    background:var(--ink); color:var(--parchment);
+    padding:22px 40px; display:flex; align-items:center; gap:18px;
+    border-bottom:3px solid var(--accent); flex-shrink:0;
+}
+.site-logo {
+    font-family:var(--font-latin); font-weight:600; font-size:1.8rem;
+    letter-spacing:.04em; color:var(--parchment);
+}
+.site-logo em {
+    font-style:normal; font-weight:400; color:var(--stone-lt);
+    font-size:1.2rem;
+}
+.site-tagline {
+    font-size:.76rem; color:var(--stone-lt); font-weight:300;
+    font-style:italic;
+}
+
+/* ── HERO ── */
+.hero {
+    position:relative; z-index:1;
+    padding:52px 40px 40px; text-align:center; flex-shrink:0;
+}
+.hero h2 {
+    font-family:var(--font-latin); font-weight:400; font-size:2rem;
+    color:var(--ink); margin-bottom:10px; letter-spacing:.02em;
+}
+.hero p { font-size:.88rem; color:var(--stone); max-width:520px; margin:0 auto; line-height:1.7; }
+
+/* ── GRILLE DES ESPACES ── */
+.spaces-grid {
+    position:relative; z-index:1;
+    display:flex; gap:28px; justify-content:center;
+    padding:0 40px 60px; flex-wrap:wrap;
+    flex:1; align-items:flex-start; padding-top:10px;
+}
+
+.space-card {
+    width:240px; text-decoration:none; color:inherit;
+    display:flex; flex-direction:column; align-items:center;
+    padding:36px 24px 30px;
+    background:#fff; border:1px solid var(--border);
+    border-radius:12px;
+    box-shadow:0 2px 12px rgba(0,0,0,.06);
+    transition:all .25s ease; cursor:pointer;
+    position:relative; overflow:hidden;
+}
+.space-card::before {
+    content:''; position:absolute; inset:0; opacity:0;
+    transition:opacity .25s;
+}
+.space-card:hover { transform:translateY(-5px); box-shadow:0 10px 32px rgba(0,0,0,.12); }
+.space-card:hover::before { opacity:1; }
+
+/* Couleur accent par carte */
+.card-sandbox  { border-top:4px solid #5c4a2a; }
+.card-sandbox::before  { background:linear-gradient(160deg, rgba(92,74,42,.04) 0%, transparent 60%); }
+.card-sandbox:hover  { border-color:#5c4a2a; }
+
+.card-teacher  { border-top:4px solid var(--teacher); }
+.card-teacher::before  { background:linear-gradient(160deg, rgba(139,58,30,.04) 0%, transparent 60%); }
+.card-teacher:hover  { border-color:var(--teacher); }
+
+.card-exercises { border-top:4px solid var(--corr); }
+.card-exercises::before { background:linear-gradient(160deg, rgba(26,58,92,.04) 0%, transparent 60%); }
+.card-exercises:hover { border-color:var(--corr); }
+
+/* Icône */
+.card-icon {
+    width:64px; height:64px; border-radius:16px;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:20px; flex-shrink:0;
+}
+.card-sandbox  .card-icon { background:#f5ead0; }
+.card-teacher  .card-icon { background:var(--accent-lt); }
+.card-exercises .card-icon { background:#e8f0f8; }
+
+.card-icon svg { width:30px; height:30px; }
+
+.card-name {
+    font-family:var(--font-latin); font-weight:600; font-size:1.15rem;
+    margin-bottom:8px; letter-spacing:.01em; text-align:center;
+}
+.card-sandbox  .card-name  { color:#3a2a0e; }
+.card-teacher  .card-name  { color:var(--teacher); }
+.card-exercises .card-name { color:var(--corr); }
+
+.card-desc { font-size:.78rem; color:var(--stone); text-align:center; line-height:1.6; }
+
+.card-arrow {
+    margin-top:18px; font-size:.75rem; font-weight:500;
+    display:flex; align-items:center; gap:5px;
+    opacity:0; transform:translateX(-4px);
+    transition:all .22s;
+}
+.space-card:hover .card-arrow { opacity:1; transform:translateX(0); }
+.card-sandbox  .card-arrow { color:#5c4a2a; }
+.card-teacher  .card-arrow { color:var(--teacher); }
+.card-exercises .card-arrow { color:var(--corr); }
+
+/* ── FOOTER ── */
+footer {
+    position:relative; z-index:1;
+    text-align:center; padding:18px 40px;
+    border-top:1px solid var(--border);
+    font-size:.72rem; color:var(--stone-lt);
+}
+footer a { color:var(--stone); text-decoration:none; }
+footer a:hover { text-decoration:underline; }
+</style>
 </head>
 <body>
 
 <header>
-    <h1>JuxtaLatin</h1>
-    <p>Analyse morphologique &amp; code couleur grammatical</p>
+    <div>
+        <div class="site-logo">Step <em>by</em> Step</div>
+        <div class="site-tagline">Apprendre le latin, pas à pas</div>
+    </div>
 </header>
 
-<section id="deposit-section">
-    <h2>Texte latin</h2>
-    <textarea id="raw-latin-input" placeholder="Collez votre texte latin ici…">Arma virumque cano, Troiae qui primus ab oris Italiam, fato profugus, Lavinaque venit litora.</textarea>
-    <div class="dep-btns">
-        <button id="btn-deposit" onclick="depositText()">Déposer le texte</button>
-        <button id="btn-reset"   onclick="resetAll()">↩ Modifier</button>
-    </div>
-</section>
+<div class="hero">
+    <h2>Bienvenue sur Step by Step</h2>
+    <p>Un outil d'analyse et de traduction du latin — pour les enseignants comme pour les étudiants.</p>
+</div>
 
-<div id="main-area">
+<div class="spaces-grid">
 
-    <!-- ═══ COL 1 : texte intégral ═══ -->
-    <div class="column">
-        <div class="col-title">Texte intégral</div>
-        <div id="full-latin-display"></div>
-    </div>
-
-    <!-- ═══ COL 2 : tokens + code couleur + réordonnancement ═══ -->
-    <div class="column">
-        <div class="col-title">Analyse &amp; code couleur</div>
-        <div id="tokenized-display"></div>
-
-        <!-- Réordonnancement intégré dans col 2 -->
-        <div id="reorder-section">
-            <div class="reorder-section-title">Réordonnancement</div>
-            <div class="reorder-actions">
-                <button class="btn-reorder primary" onclick="importAllTokens()">⊕ Tous</button>
-                <button class="btn-reorder"         onclick="importSentenceTokens()">⊕ Phrase sélectionnée</button>
-                <button class="btn-reorder danger"  onclick="clearReorderZone()">✕ Vider</button>
-            </div>
-            <div id="reorder-zone"
-                 ondragover="onDragOver(event)"
-                 ondrop="onDrop(event)"
-                 ondragleave="onDragLeave(event)">
-                <span class="reorder-empty-hint">Importez des tokens ci-dessus</span>
-            </div>
+    <!-- Bac à sable -->
+    <a class="space-card card-sandbox" href="html/bac_a_sable.html">
+        <div class="card-icon">
+            <!-- Icône : stylet / plume -->
+            <svg viewBox="0 0 32 32" fill="none" stroke="#5c4a2a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M24 4L28 8 12 24 4 28 8 20 24 4Z"/>
+                <line x1="20" y1="8" x2="24" y2="12"/>
+            </svg>
         </div>
-    </div>
+        <div class="card-name">Bac à sable</div>
+        <div class="card-desc">Analysez et annotez librement un texte latin — code couleur, juxtalatin, réordonnancement.</div>
+        <div class="card-arrow">Ouvrir <span>→</span></div>
+    </a>
 
-    <!-- ═══ COL 3 : traduction libre ═══ -->
-    <div class="column" id="col-translation">
-        <div class="col-title">Proposition de traduction</div>
-        <p id="translation-hint">Zone de saisie libre pour votre traduction.</p>
-        <textarea id="translation-area" placeholder="Saisissez votre traduction ici…" spellcheck="true"></textarea>
-        <div class="translation-actions">
-            <button class="btn-trans danger" onclick="clearTranslation()">✕ Effacer</button>
-            <button class="btn-trans" onclick="copyTranslation()">⎘ Copier</button>
+    <!-- Espace enseignant -->
+    <a class="space-card card-teacher" href="html/espace_enseignant.html">
+        <div class="card-icon">
+            <!-- Icône : tableau / mortier -->
+            <svg viewBox="0 0 32 32" fill="none" stroke="#8b3a1e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="6" width="24" height="16" rx="2"/>
+                <line x1="12" y1="22" x2="10" y2="28"/>
+                <line x1="20" y1="22" x2="22" y2="28"/>
+                <line x1="9" y1="28" x2="23" y2="28"/>
+                <line x1="8" y1="12" x2="16" y2="12"/>
+                <line x1="8" y1="16" x2="13" y2="16"/>
+            </svg>
         </div>
-    </div>
+        <div class="card-name">Espace enseignant</div>
+        <div class="card-desc">Préparez un cours complet — code couleur, juxtalatin, traduction — et exportez le corrigé en HTML.</div>
+        <div class="card-arrow">Ouvrir <span>→</span></div>
+    </a>
+
+    <!-- Entraînement corrigé -->
+    <a class="space-card card-exercises" href="html/exercices.html" target="_blank">
+        <div class="card-icon">
+            <!-- Icône : liste avec coches -->
+            <svg viewBox="0 0 32 32" fill="none" stroke="#1a3a5c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="4" width="24" height="24" rx="3"/>
+                <polyline points="10,16 13,19 22,11"/>
+                <line x1="10" y1="10" x2="22" y2="10"/>
+                <line x1="10" y1="22" x2="17" y2="22"/>
+            </svg>
+        </div>
+        <div class="card-name">Entraînement corrigé</div>
+        <div class="card-desc">Travaillez sur des exercices préparés par l'enseignant et consultez le corrigé colonne par colonne.</div>
+        <div class="card-arrow">Voir les exercices <span>→</span></div>
+    </a>
 
 </div>
 
-<!-- ═══════════════════════════════════════
-     POPUP PARTAGÉ
-═══════════════════════════════════════ -->
-<div class="popup-overlay" id="popup-overlay" onclick="closePopupOverlay(event)">
-    <div class="popup-box" id="popup-box" onclick="event.stopPropagation()">
+<footer>
+    Step by Step — JuxtaLatin &nbsp;·&nbsp;
+    <a href="https://gauchers.github.io/stepbystep/" target="_blank">gauchers.github.io/stepbystep</a>
+</footer>
 
-        <div class="popup-word" id="popup-word"></div>
-
-        <!-- Catégorie grammaticale — col 2 seulement -->
-        <div id="popup-color-section">
-            <div class="popup-section-label">Catégorie grammaticale</div>
-            <div class="popup-case-grid">
-                <button class="popup-case-btn" data-case="nominatif"  onclick="popupSetCase('nominatif')">Nominatif</button>
-                <button class="popup-case-btn" data-case="vocatif"    onclick="popupSetCase('vocatif')">Vocatif</button>
-                <button class="popup-case-btn" data-case="accusatif"  onclick="popupSetCase('accusatif')">Accusatif</button>
-                <button class="popup-case-btn" data-case="genitif"    onclick="popupSetCase('genitif')">Génitif</button>
-                <button class="popup-case-btn" data-case="dat-abl"    onclick="popupSetCase('dat-abl')">Datif / Ablatif</button>
-                <button class="popup-case-btn" data-case="verbe"      onclick="popupSetCase('verbe')">Verbe conj.</button>
-                <button class="popup-case-btn" data-case="infinitif"  onclick="popupSetCase('infinitif')">Infinitif</button>
-                <button class="popup-case-btn" data-case="coord"      onclick="popupSetCase('coord')">Conj. coord.</button>
-                <button class="popup-case-btn" data-case="subord"     onclick="popupSetCase('subord')">Conj. subord.</button>
-            </div>
-        </div>
-
-        <!-- Dictionnaire — col 1 : Gaffiot seulement / col 2 : Gaffiot + Perseus -->
-        <div class="popup-section-label">Dictionnaire</div>
-        <div class="popup-links">
-            <a class="popup-link popup-link-gaffiot" id="popup-link-gaffiot" href="#" target="_blank">Gaffiot ↗</a>
-        </div>
-
-        <!-- Aide morphologique — col 2 seulement -->
-        <div id="popup-aide-section">
-            <div class="popup-section-label">Aide</div>
-            <div class="popup-links">
-                <a class="popup-link popup-link-perseus" id="popup-link-perseus" href="#" target="_blank">Perseus Morpheus ↗</a>
-            </div>
-        </div>
-
-        <div class="popup-actions">
-            <button class="popup-btn-sm danger" id="popup-clear-btn" onclick="popupClearCase()">✕ Effacer couleur</button>
-            <button class="popup-btn-sm popup-close" onclick="closePopup()">Fermer</button>
-        </div>
-    </div>
-</div>
-
-<script>
-/* ══════════════════════════════════
-   ÉTAT
-══════════════════════════════════ */
-let sentences    = [];
-let currentToken = null;   // dernier token double-cliqué (col 2), utilisé pour import phrase
-let popupTarget  = null;   // { el, type: 'full'|'token' }
-let dragSrcEl    = null;
-
-/* ══════════════════════════════════
-   DÉPÔT
-══════════════════════════════════ */
-function depositText() {
-    const input = document.getElementById('raw-latin-input');
-    const text  = input.value.trim();
-    if (!text) return;
-    input.classList.add('hidden');
-    document.getElementById('btn-deposit').style.display = 'none';
-    document.getElementById('btn-reset').classList.add('visible');
-    sentences = parseSentences(text);
-    renderFullText();
-    renderTokenized();
-    document.getElementById('main-area').classList.add('visible');
-    fitHeight();
-}
-
-function fitHeight() {
-    const h = window.innerHeight
-        - document.querySelector('header').offsetHeight
-        - document.getElementById('deposit-section').offsetHeight;
-    document.getElementById('main-area').style.height = h + 'px';
-}
-window.addEventListener('resize', () => {
-    if (document.getElementById('main-area').classList.contains('visible')) fitHeight();
-});
-
-function resetAll() {
-    document.getElementById('raw-latin-input').classList.remove('hidden');
-    document.getElementById('btn-deposit').style.display = '';
-    document.getElementById('btn-reset').classList.remove('visible');
-    document.getElementById('full-latin-display').innerHTML = '';
-    document.getElementById('tokenized-display').innerHTML  = '';
-    document.getElementById('main-area').classList.remove('visible');
-    clearReorderZone();
-    sentences = []; currentToken = null; popupTarget = null;
-}
-
-/* ══════════════════════════════════
-   PARSING
-══════════════════════════════════ */
-function parseSentences(text) {
-    const chunks = text.split(/(?<=[.?!])\s*/);
-    return chunks.map(chunk => {
-        const parts = chunk.split(/(\s+|[,;:'"«»()\[\]\-—.?!])/).filter(Boolean);
-        return parts
-            .filter(p => !/^\s+$/.test(p))
-            .map(p => ({
-                text: p,
-                isPunct: /^[,;:'"«»()\[\]\-—.?!]$/.test(p),
-                isSentenceEnd: /^[.?!]$/.test(p),
-                grammaticalCase: ''
-            }));
-    }).filter(s => s.length > 0);
-}
-
-/* ══════════════════════════════════
-   COL 1 : texte intégral continu
-   Double-clic → popup Gaffiot uniquement
-══════════════════════════════════ */
-function renderFullText() {
-    const el = document.getElementById('full-latin-display');
-    el.innerHTML = '';
-    sentences.forEach(sentence => {
-        sentence.forEach(tok => {
-            if (tok.isPunct) {
-                el.appendChild(document.createTextNode(tok.text + ' '));
-            } else {
-                const span = document.createElement('span');
-                span.className   = 'full-word';
-                span.textContent = tok.text;
-                span.addEventListener('dblclick', e => { e.preventDefault(); openPopup(span, 'full'); });
-                el.appendChild(span);
-                el.appendChild(document.createTextNode(' '));
-            }
-        });
-    });
-}
-
-/* ══════════════════════════════════
-   COL 2 : tokens avec sauts de ligne
-   Double-clic → popup couleur + Gaffiot + Perseus
-══════════════════════════════════ */
-function renderTokenized() {
-    const el = document.getElementById('tokenized-display');
-    el.innerHTML = '';
-    sentences.forEach((sentence, si) => {
-        const sentDiv = document.createElement('div');
-        sentDiv.className       = 'token-sentence';
-        sentDiv.dataset.sentIdx = si;
-        sentence.forEach((tok, ti) => {
-            if (tok.isPunct) {
-                sentDiv.appendChild(document.createTextNode(tok.text + ' '));
-            } else {
-                const span = document.createElement('span');
-                span.className       = 'latin-word';
-                span.textContent     = tok.text;
-                span.dataset.sentIdx = si;
-                span.dataset.tokIdx  = ti;
-                if (tok.grammaticalCase) {
-                    span.classList.add('color-' + tok.grammaticalCase);
-                    span.dataset.grammaticalCase = tok.grammaticalCase;
-                }
-                span.addEventListener('dblclick', e => {
-                    e.preventDefault();
-                    currentToken = span;
-                    openPopup(span, 'token');
-                });
-                sentDiv.appendChild(span);
-            }
-        });
-        el.appendChild(sentDiv);
-    });
-}
-
-/* ══════════════════════════════════
-   POPUP
-══════════════════════════════════ */
-function openPopup(el, type) {
-    popupTarget = { el, type };
-    const word  = el.textContent.trim();
-    const clean = word.toLowerCase().replace(/[^a-z]/gi, '');
-
-    document.getElementById('popup-word').textContent = word;
-    document.getElementById('popup-link-gaffiot').href =
-        `https://gaffiot.fr/#${encodeURIComponent(clean)}`;
-    document.getElementById('popup-link-perseus').href =
-        `https://www.perseus.tufts.edu/hopper/morph?l=${encodeURIComponent(clean)}&la=la`;
-
-    // Col 1 : masquer section catégorie + aide Perseus
-    // Col 2 : tout afficher
-    const showExtra = type === 'token';
-    document.getElementById('popup-color-section').style.display = showExtra ? '' : 'none';
-    document.getElementById('popup-aide-section').style.display  = showExtra ? '' : 'none';
-    document.getElementById('popup-clear-btn').style.display     = showExtra ? '' : 'none';
-
-    if (showExtra) {
-        const activeCase = el.dataset.grammaticalCase || '';
-        document.querySelectorAll('.popup-case-btn').forEach(btn =>
-            btn.classList.toggle('active', btn.dataset.case === activeCase)
-        );
-    }
-
-    // Positionnement
-    const overlay = document.getElementById('popup-overlay');
-    const box     = document.getElementById('popup-box');
-    overlay.classList.add('visible');
-    requestAnimationFrame(() => {
-        const rect = el.getBoundingClientRect();
-        let top  = rect.bottom + 8 + window.scrollY;
-        let left = rect.left + window.scrollX;
-        if (left + box.offsetWidth  > window.innerWidth  - 10) left = window.innerWidth  - box.offsetWidth  - 10;
-        if (top  + box.offsetHeight > window.innerHeight + window.scrollY - 10) top = rect.top + window.scrollY - box.offsetHeight - 8;
-        box.style.top  = top  + 'px';
-        box.style.left = left + 'px';
-    });
-}
-
-function closePopupOverlay(e) {
-    if (e.target === document.getElementById('popup-overlay')) closePopup();
-}
-function closePopup() {
-    document.getElementById('popup-overlay').classList.remove('visible');
-    popupTarget = null;
-}
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closePopup(); });
-
-/* ══════════════════════════════════
-   CODE COULEUR (via popup col 2)
-══════════════════════════════════ */
-function popupSetCase(caseName) {
-    if (!popupTarget || popupTarget.type !== 'token') return;
-    const el = popupTarget.el;
-    removeColorClasses(el);
-    if (el.dataset.grammaticalCase === caseName) {
-        delete el.dataset.grammaticalCase;
-        updateSentenceData(el, '');
-        document.querySelectorAll('.popup-case-btn').forEach(b => b.classList.remove('active'));
-    } else {
-        el.classList.add('color-' + caseName);
-        el.dataset.grammaticalCase = caseName;
-        updateSentenceData(el, caseName);
-        document.querySelectorAll('.popup-case-btn').forEach(btn =>
-            btn.classList.toggle('active', btn.dataset.case === caseName)
-        );
-    }
-    syncReorderColors();
-}
-
-function popupClearCase() {
-    if (!popupTarget || popupTarget.type !== 'token') return;
-    const el = popupTarget.el;
-    removeColorClasses(el);
-    delete el.dataset.grammaticalCase;
-    updateSentenceData(el, '');
-    document.querySelectorAll('.popup-case-btn').forEach(b => b.classList.remove('active'));
-    syncReorderColors();
-}
-
-function removeColorClasses(el) {
-    [...el.classList].forEach(c => { if (c.startsWith('color-')) el.classList.remove(c); });
-}
-function updateSentenceData(el, caseName) {
-    const si = parseInt(el.dataset.sentIdx);
-    const ti = parseInt(el.dataset.tokIdx);
-    if (!isNaN(si) && !isNaN(ti) && sentences[si]?.[ti])
-        sentences[si][ti].grammaticalCase = caseName;
-}
-
-/* ══════════════════════════════════
-   RÉORDONNANCEMENT (dans col 2)
-══════════════════════════════════ */
-function importAllTokens() {
-    const zone = document.getElementById('reorder-zone');
-    zone.innerHTML = '';
-    sentences.forEach((sentence, si) => {
-        if (si > 0) { const br = document.createElement('div'); br.className = 'reorder-break'; zone.appendChild(br); }
-        sentence.forEach(tok => { if (!tok.isPunct) zone.appendChild(makeReorderToken(tok)); });
-    });
-    updateEmptyHint();
-}
-
-function importSentenceTokens() {
-    if (!currentToken) {
-        alert('Double-cliquez d\'abord sur un token pour indiquer la phrase à importer.');
-        return;
-    }
-    const si = parseInt(currentToken.dataset.sentIdx);
-    if (isNaN(si) || !sentences[si]) return;
-    const zone = document.getElementById('reorder-zone');
-    zone.innerHTML = '';
-    sentences[si].forEach(tok => { if (!tok.isPunct) zone.appendChild(makeReorderToken(tok)); });
-    updateEmptyHint();
-}
-
-function makeReorderToken(tok) {
-    const el = document.createElement('span');
-    el.className    = 'reorder-token';
-    el.draggable    = true;
-    el.dataset.text = tok.text;
-    if (tok.grammaticalCase) el.classList.add('color-' + tok.grammaticalCase);
-    el.innerHTML = `<span class="drag-handle">⠿</span>${tok.text}`;
-    el.addEventListener('dragstart', onReorderDragStart);
-    el.addEventListener('dragend',   onReorderDragEnd);
-    el.addEventListener('dragover',  onReorderDragOverToken);
-    el.addEventListener('drop',      onReorderDropOnToken);
-    return el;
-}
-
-function clearReorderZone() {
-    document.getElementById('reorder-zone').innerHTML = '';
-    updateEmptyHint();
-}
-
-function syncReorderColors() {
-    document.querySelectorAll('.reorder-token').forEach(rt => {
-        const text = rt.dataset.text;
-        let found  = '';
-        sentences.forEach(s => s.forEach(t => { if (t.text === text && t.grammaticalCase) found = t.grammaticalCase; }));
-        removeColorClasses(rt);
-        if (found) rt.classList.add('color-' + found);
-    });
-}
-
-function updateEmptyHint() {
-    const zone = document.getElementById('reorder-zone');
-    const has  = zone.querySelector('.reorder-token');
-    let hint   = zone.querySelector('.reorder-empty-hint');
-    if (!has) {
-        if (!hint) {
-            hint = document.createElement('span');
-            hint.className   = 'reorder-empty-hint';
-            hint.textContent = 'Importez des tokens ci-dessus';
-            zone.appendChild(hint);
-        }
-    } else { if (hint) hint.remove(); }
-}
-
-/* Drag & drop */
-function onReorderDragStart(e) { dragSrcEl = this; this.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
-function onReorderDragEnd()    { this.classList.remove('dragging'); document.querySelectorAll('.reorder-token').forEach(t => t.style.outline=''); dragSrcEl = null; }
-function onReorderDragOverToken(e) { e.preventDefault(); if (dragSrcEl && dragSrcEl !== this) this.style.outline = '2px solid var(--accent)'; }
-function onReorderDropOnToken(e) {
-    e.preventDefault(); e.stopPropagation(); this.style.outline = '';
-    if (!dragSrcEl || dragSrcEl === this) return;
-    document.getElementById('reorder-zone').insertBefore(dragSrcEl, this);
-    updateEmptyHint();
-}
-function onDragOver(e)  { e.preventDefault(); document.getElementById('reorder-zone').classList.add('drag-over'); }
-function onDragLeave()  { document.getElementById('reorder-zone').classList.remove('drag-over'); }
-function onDrop(e) {
-    e.preventDefault();
-    document.getElementById('reorder-zone').classList.remove('drag-over');
-    if (dragSrcEl && e.target === document.getElementById('reorder-zone'))
-        document.getElementById('reorder-zone').appendChild(dragSrcEl);
-    document.querySelectorAll('.reorder-token').forEach(t => t.style.outline='');
-    updateEmptyHint();
-}
-
-/* ══════════════════════════════════
-   COL 3 : traduction libre
-══════════════════════════════════ */
-function clearTranslation() {
-    if (confirm('Effacer la traduction ?')) document.getElementById('translation-area').value = '';
-}
-function copyTranslation() {
-    const txt = document.getElementById('translation-area').value;
-    if (!txt) return;
-    navigator.clipboard.writeText(txt).then(() => {
-        const btn = event.target;
-        const orig = btn.textContent;
-        btn.textContent = '✓ Copié';
-        setTimeout(() => btn.textContent = orig, 1500);
-    });
-}
-</script>
 </body>
 </html>
