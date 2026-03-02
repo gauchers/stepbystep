@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>JuxtaLatin — Espace enseignant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ══ CSS principal JuxtaLatin (intégré) ══ */
+:root {
+    --ink:        #1a1209;
+    --parchment:  #fdf6e3;
+    --parchment2: #f5ead0;
+    --stone:      #9e8f79;
+    --stone-lt:   #d4c9b4;
+    --border:     #c9baa0;
+    --accent:     #8b3a1e;
+    --accent-lt:  #f0ddd6;
+    --nom:  #1a3fcc;
+    --voc:  #1a3fcc;
+    --acc:  #1e7a35;
+    --gen:  #666666;
+    --dat:  #b06000;
+    --vrb:  #b81414;
+    --inf:  #6b1db8;
+    --cco:  #c07800;
+    --csu:  #007a6e;
+    --radius: 6px;
+    --font-latin: 'Cormorant Garamond', Georgia, serif;
+    --font-ui:    'DM Sans', sans-serif;
+}
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:var(--font-ui); background:var(--parchment); color:var(--ink); min-height:100vh; display:flex; flex-direction:column; }
+header { background:var(--ink); color:var(--parchment); padding:14px 28px; display:flex; align-items:center; gap:16px; border-bottom:3px solid var(--accent); flex-shrink:0; }
+header h1 { font-family:var(--font-latin); font-weight:600; font-size:1.5rem; letter-spacing:.04em; }
+#deposit-section { padding:18px 28px 14px; border-bottom:1px solid var(--border); background:var(--parchment2); flex-shrink:0; }
+#deposit-section h2 { font-family:var(--font-latin); font-size:.9rem; color:var(--stone); font-weight:400; text-transform:uppercase; letter-spacing:.07em; margin-bottom:6px; }
+#raw-latin-input { width:100%; min-height:68px; font-family:var(--font-latin); font-size:1.05rem; line-height:1.7; background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:8px 12px; color:var(--ink); resize:vertical; }
+#raw-latin-input:focus { outline:none; border-color:var(--accent); }
+#raw-latin-input.hidden { display:none; }
+.dep-btns { margin-top:7px; display:flex; gap:8px; align-items:center; }
+#btn-deposit { padding:7px 20px; background:var(--accent); color:#fff; border:none; border-radius:var(--radius); font-family:var(--font-ui); font-size:.84rem; font-weight:500; cursor:pointer; }
+#btn-deposit:hover { background:#6e2e17; }
+#btn-reset { padding:7px 14px; background:transparent; color:var(--stone); border:1px solid var(--border); border-radius:var(--radius); font-size:.8rem; cursor:pointer; display:none; }
+#btn-reset.visible { display:inline-block; }
+#main-area { display:none; flex:1; overflow:hidden; grid-template-columns:1fr 1fr 1fr; }
+#main-area.visible { display:grid; }
+.column { padding:18px 20px; overflow-y:auto; border-right:1px solid var(--border); display:flex; flex-direction:column; }
+.column:last-child { border-right:none; }
+.col-title { font-family:var(--font-latin); font-size:.72rem; color:var(--stone); text-transform:uppercase; letter-spacing:.1em; margin-bottom:12px; display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.col-title::after { content:''; flex:1; height:1px; background:var(--border); }
+.token-sentence { display:block; margin-bottom:10px; padding-bottom:8px; border-bottom:1px dashed var(--stone-lt); }
+.token-sentence:last-child { border-bottom:none; }
+.latin-word { display:inline-block; font-family:var(--font-latin); font-size:1.08rem; padding:2px 6px; margin:3px 2px; border:1px solid var(--stone-lt); background:#fff; border-radius:4px; cursor:pointer; line-height:1.5; transition:background .15s, border-color .15s; user-select:none; }
+.latin-word:hover { background:var(--accent-lt); border-color:var(--accent); }
+.color-nominatif { color:var(--nom); border-color:var(--nom); }
+.color-vocatif   { color:var(--voc); border-color:var(--voc); }
+.color-accusatif { color:var(--acc); border-color:var(--acc); }
+.color-genitif   { color:var(--gen); border-color:var(--gen); }
+.color-dat-abl   { color:var(--dat); border-color:var(--dat); }
+.color-verbe     { color:var(--vrb); border-color:var(--vrb); }
+.color-infinitif { color:var(--inf); border-color:var(--inf); font-style:italic; }
+.color-coord  { color:var(--cco); border:2px solid var(--cco); border-radius:12px; padding:1px 8px; }
+.color-subord { color:var(--csu); border:2px solid var(--csu); border-radius:2px;  padding:1px 8px; }
+.popup-overlay { display:none; position:fixed; inset:0; z-index:200; }
+.popup-overlay.visible { display:block; }
+.popup-box { position:absolute; background:#fff; border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 8px 32px rgba(0,0,0,.2); padding:14px 16px; min-width:240px; max-width:320px; z-index:201; }
+.popup-word { font-family:var(--font-latin); font-size:1.1rem; font-weight:600; color:var(--accent); margin-bottom:10px; }
+.popup-section-label { font-size:.68rem; color:var(--stone); text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; margin-top:10px; font-weight:500; }
+.popup-case-grid { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:2px; }
+.popup-case-btn { padding:3px 9px; border-radius:20px; border:1px solid var(--border); background:#fff; font-family:var(--font-ui); font-size:.72rem; cursor:pointer; transition:all .15s; color:var(--ink); }
+.popup-case-btn:hover { background:var(--parchment2); }
+.popup-case-btn[data-case="nominatif"].active  { background:var(--nom); color:#fff; border-color:var(--nom); }
+.popup-case-btn[data-case="vocatif"].active    { background:var(--voc); color:#fff; border-color:var(--voc); }
+.popup-case-btn[data-case="accusatif"].active  { background:var(--acc); color:#fff; border-color:var(--acc); }
+.popup-case-btn[data-case="genitif"].active    { background:var(--gen); color:#fff; border-color:var(--gen); }
+.popup-case-btn[data-case="dat-abl"].active    { background:var(--dat); color:#fff; border-color:var(--dat); }
+.popup-case-btn[data-case="verbe"].active      { background:var(--vrb); color:#fff; border-color:var(--vrb); }
+.popup-case-btn[data-case="infinitif"].active  { background:var(--inf); color:#fff; border-color:var(--inf); font-style:italic; }
+.popup-case-btn[data-case="coord"].active      { background:var(--cco); color:#fff; border-color:var(--cco); }
+.popup-case-btn[data-case="subord"].active     { background:var(--csu); color:#fff; border-color:var(--csu); }
+.popup-links { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+.popup-link { display:inline-block; padding:3px 10px; border-radius:3px; text-decoration:none; font-size:.73rem; font-weight:500; transition:opacity .15s; }
+.popup-link:hover { opacity:.8; }
+.popup-link-gaffiot { background:var(--accent); color:#fff; }
+.popup-link-perseus { background:#1a3a5c; color:#fff; }
+.popup-actions { display:flex; gap:6px; margin-top:10px; border-top:1px solid var(--border); padding-top:8px; }
+.popup-btn-sm { padding:4px 10px; font-size:.72rem; border-radius:4px; cursor:pointer; border:1px solid var(--border); background:#fff; transition:all .15s; }
+.popup-btn-sm:hover { background:var(--parchment2); }
+.popup-btn-sm.danger { border-color:#e0aaaa; color:#9b2020; }
+.popup-btn-sm.danger:hover { background:#fdf0f0; }
+.popup-close { margin-left:auto; }
+</style>
+<style>
+/* ── Éléments spécifiques à l'espace enseignant ── */
+
+.teacher-badge {
+    font-size:.68rem; font-weight:500; letter-spacing:.06em;
+    background:var(--accent); color:#fff; padding:3px 10px; border-radius:20px;
+    text-transform:uppercase; flex-shrink:0;
+}
+header .subtitle { font-size:.74rem; color:var(--stone-lt); font-weight:300; flex:1; }
+header .nav-link {
+    font-size:.78rem; color:var(--stone-lt); text-decoration:none;
+    border:1px solid rgba(255,255,255,.2); border-radius:var(--radius);
+    padding:5px 12px; transition:all .2s; white-space:nowrap;
+}
+header .nav-link:hover { background:rgba(255,255,255,.1); color:#fff; }
+
+/* Bouton export */
+#btn-export {
+    margin-left:auto; display:none;
+    padding:7px 16px; background:var(--ink); color:var(--parchment);
+    border:none; border-radius:var(--radius); font-family:var(--font-ui);
+    font-size:.82rem; font-weight:500; cursor:pointer; transition:all .2s;
+    align-items:center; gap:7px;
+}
+#btn-export.visible { display:flex; }
+#btn-export:hover { background:#333; }
+#btn-export svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+
+/* Légende couleurs col 1 */
+#color-legend {
+    flex-shrink:0; margin-top:14px; padding-top:12px;
+    border-top:1px solid var(--border);
+    display:flex; flex-wrap:wrap; gap:5px;
+}
+.leg { font-size:.68rem; padding:2px 8px; border-radius:12px; border:1px solid; cursor:default; }
+
+/* ── COL 2 : juxtalatin ── */
+#col-juxta { background:#fafaf8; }
+.juxta-hint { font-size:.75rem; color:var(--stone); font-style:italic; margin-bottom:12px; line-height:1.5; flex-shrink:0; }
+#juxta-pairs { flex:1; display:flex; flex-direction:column; gap:0; }
+
+.juxta-pair {
+    display:grid; grid-template-columns:1fr 1fr;
+    border:1px solid var(--border); border-radius:var(--radius);
+    overflow:hidden; margin-bottom:6px; background:#fff; transition:box-shadow .15s;
+}
+.juxta-pair:focus-within { box-shadow:0 0 0 2px var(--accent); }
+.juxta-cell { position:relative; }
+.juxta-cell:first-child { border-right:1px solid var(--border); }
+.juxta-lang {
+    position:absolute; top:4px; left:6px;
+    font-size:.6rem; color:var(--stone-lt); text-transform:uppercase;
+    letter-spacing:.07em; pointer-events:none;
+}
+.juxta-input {
+    width:100%; padding:20px 8px 6px 8px;
+    font-family:var(--font-latin); font-size:1rem; line-height:1.5;
+    background:transparent; border:none; outline:none; color:var(--ink);
+    resize:none; min-height:52px; overflow:hidden;
+}
+.juxta-input.fr-cell { font-style:italic; }
+.juxta-pair-actions {
+    grid-column:1/-1; display:flex; justify-content:flex-end;
+    border-top:1px solid var(--border); padding:3px 6px; background:var(--parchment2);
+}
+.btn-pair-del {
+    font-size:.68rem; color:var(--stone); background:none; border:none;
+    cursor:pointer; padding:2px 6px; border-radius:3px; transition:all .15s;
+}
+.btn-pair-del:hover { background:#fdf0f0; color:#9b2020; }
+
+#btn-add-pair {
+    flex-shrink:0; margin-top:4px;
+    padding:7px 14px; background:#fff; color:var(--stone);
+    border:1px dashed var(--border); border-radius:var(--radius);
+    font-size:.78rem; cursor:pointer; width:100%; transition:all .15s;
+    font-family:var(--font-ui);
+}
+#btn-add-pair:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-lt); }
+
+/* ── COL 3 : traduction ── */
+#col-translation { background:#f8f8f5; }
+#translation-hint { font-size:.75rem; color:var(--stone); font-style:italic; margin-bottom:10px; line-height:1.5; flex-shrink:0; }
+#translation-area {
+    flex:1; min-height:180px;
+    font-family:var(--font-latin); font-size:1.1rem; line-height:1.9;
+    background:#fff; border:1px solid var(--border); border-radius:var(--radius);
+    padding:12px 14px; color:var(--ink); resize:none; width:100%; outline:none;
+}
+#translation-area:focus { border-color:var(--accent); }
+.translation-actions { display:flex; gap:6px; margin-top:8px; flex-shrink:0; }
+.btn-trans { padding:5px 12px; font-size:.75rem; border-radius:var(--radius); cursor:pointer; border:1px solid var(--border); background:#fff; font-family:var(--font-ui); transition:all .15s; }
+.btn-trans:hover { background:var(--parchment2); }
+.btn-trans.danger { border-color:#e0aaaa; color:#9b2020; }
+.btn-trans.danger:hover { background:#fdf0f0; }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>JuxtaLatin</h1>
+    <span class="teacher-badge">Espace enseignant</span>
+    <span class="subtitle">Préparation de cours — code couleur · juxtalatin · traduction</span>
+    <a href="index.html" class="nav-link">← Outil principal</a>
+</header>
+
+<section id="deposit-section">
+    <h2>Texte latin à préparer</h2>
+    <textarea id="raw-latin-input" placeholder="Collez votre texte latin ici…">Arma virumque cano, Troiae qui primus ab oris Italiam, fato profugus, Lavinaque venit litora.</textarea>
+    <div class="dep-btns">
+        <button id="btn-deposit" onclick="depositText()">Préparer le texte</button>
+        <button id="btn-reset"   onclick="resetAll()">↩ Modifier</button>
+        <button id="btn-export"  onclick="exportHTML()">
+            <svg viewBox="0 0 16 16"><polyline points="8 2 8 11"/><polyline points="4 7 8 11 12 7"/><rect x="2" y="13" width="12" height="1.5" rx="0.5"/></svg>
+            Exporter en HTML
+        </button>
+    </div>
+</section>
+
+<div id="main-area">
+
+    <!-- COL 1 : tokenisation + code couleur -->
+    <div class="column">
+        <div class="col-title">Tokenisation — Code couleur</div>
+        <div id="tokenized-display"></div>
+        <div id="color-legend">
+            <span class="leg" style="color:var(--nom);border-color:var(--nom)">Nominatif</span>
+            <span class="leg" style="color:var(--voc);border-color:var(--voc)">Vocatif</span>
+            <span class="leg" style="color:var(--acc);border-color:var(--acc)">Accusatif</span>
+            <span class="leg" style="color:var(--gen);border-color:var(--gen)">Génitif</span>
+            <span class="leg" style="color:var(--dat);border-color:var(--dat)">Dat./Abl.</span>
+            <span class="leg" style="color:var(--vrb);border-color:var(--vrb)">Verbe</span>
+            <span class="leg" style="color:var(--inf);border-color:var(--inf);font-style:italic">Infinitif</span>
+            <span class="leg" style="color:var(--cco);border:1px solid var(--cco)">Coord.</span>
+            <span class="leg" style="color:var(--csu);border:1px solid var(--csu)">Subord.</span>
+        </div>
+    </div>
+
+    <!-- COL 2 : juxtalatin -->
+    <div class="column" id="col-juxta">
+        <div class="col-title">Juxtalatin latin–français</div>
+        <p class="juxta-hint">Entrez chaque unité latine face à sa traduction littérale. <br>Cliquez sur <strong>+ Ajouter</strong> pour une nouvelle ligne.</p>
+        <div id="juxta-pairs"></div>
+        <button id="btn-add-pair" onclick="addJuxtaPair()">+ Ajouter une ligne</button>
+    </div>
+
+    <!-- COL 3 : traduction -->
+    <div class="column" id="col-translation">
+        <div class="col-title">Traduction</div>
+        <p id="translation-hint">Traduction littéraire ou pédagogique du texte.</p>
+        <textarea id="translation-area" placeholder="Saisissez votre traduction ici…" spellcheck="true"></textarea>
+        <div class="translation-actions">
+            <button class="btn-trans danger" onclick="clearTranslation()">✕ Effacer</button>
+            <button class="btn-trans"        onclick="copyTranslation()">⎘ Copier</button>
+        </div>
+    </div>
+</div>
+
+<!-- POPUP -->
+<div class="popup-overlay" id="popup-overlay" onclick="closePopupOverlay(event)">
+    <div class="popup-box" id="popup-box" onclick="event.stopPropagation()">
+        <div class="popup-word" id="popup-word"></div>
+
+        <div class="popup-section-label">Catégorie grammaticale</div>
+        <div class="popup-case-grid">
+            <button class="popup-case-btn" data-case="nominatif"  onclick="popupSetCase('nominatif')">Nominatif</button>
+            <button class="popup-case-btn" data-case="vocatif"    onclick="popupSetCase('vocatif')">Vocatif</button>
+            <button class="popup-case-btn" data-case="accusatif"  onclick="popupSetCase('accusatif')">Accusatif</button>
+            <button class="popup-case-btn" data-case="genitif"    onclick="popupSetCase('genitif')">Génitif</button>
+            <button class="popup-case-btn" data-case="dat-abl"    onclick="popupSetCase('dat-abl')">Datif / Ablatif</button>
+            <button class="popup-case-btn" data-case="verbe"      onclick="popupSetCase('verbe')">Verbe conj.</button>
+            <button class="popup-case-btn" data-case="infinitif"  onclick="popupSetCase('infinitif')">Infinitif</button>
+            <button class="popup-case-btn" data-case="coord"      onclick="popupSetCase('coord')">Conj. coord.</button>
+            <button class="popup-case-btn" data-case="subord"     onclick="popupSetCase('subord')">Conj. subord.</button>
+        </div>
+
+        <div class="popup-section-label">Dictionnaire</div>
+        <div class="popup-links">
+            <a class="popup-link popup-link-gaffiot" id="popup-link-gaffiot" href="#" target="_blank">Gaffiot ↗</a>
+        </div>
+
+        <div class="popup-section-label">Aide</div>
+        <div class="popup-links">
+            <a class="popup-link popup-link-perseus" id="popup-link-perseus" href="#" target="_blank">Perseus Morpheus ↗</a>
+        </div>
+
+        <div class="popup-actions">
+            <button class="popup-btn-sm danger" onclick="popupClearCase()">✕ Effacer couleur</button>
+            <button class="popup-btn-sm popup-close" onclick="closePopup()">Fermer</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════
+   ÉTAT
+════════════════════════════════════════ */
+let sentences   = [];
+let popupTarget = null;
+
+/* ════════════════════════════════════════
+   DÉPÔT
+════════════════════════════════════════ */
+function depositText() {
+    const input = document.getElementById('raw-latin-input');
+    const text  = input.value.trim();
+    if (!text) return;
+    input.classList.add('hidden');
+    document.getElementById('btn-deposit').style.display = 'none';
+    document.getElementById('btn-reset').classList.add('visible');
+    document.getElementById('btn-export').classList.add('visible');
+    sentences = parseSentences(text);
+    renderTokenized();
+    document.getElementById('juxta-pairs').innerHTML = '';
+    addJuxtaPair('', '');
+    document.getElementById('main-area').classList.add('visible');
+    fitHeight();
+}
+
+function fitHeight() {
+    const h = window.innerHeight
+        - document.querySelector('header').offsetHeight
+        - document.getElementById('deposit-section').offsetHeight;
+    document.getElementById('main-area').style.height = h + 'px';
+}
+window.addEventListener('resize', () => {
+    if (document.getElementById('main-area').classList.contains('visible')) fitHeight();
+});
+
+function resetAll() {
+    document.getElementById('raw-latin-input').classList.remove('hidden');
+    document.getElementById('btn-deposit').style.display = '';
+    document.getElementById('btn-reset').classList.remove('visible');
+    document.getElementById('btn-export').classList.remove('visible');
+    document.getElementById('tokenized-display').innerHTML = '';
+    document.getElementById('juxta-pairs').innerHTML = '';
+    document.getElementById('translation-area').value = '';
+    document.getElementById('main-area').classList.remove('visible');
+    sentences = []; popupTarget = null;
+}
+
+/* ════════════════════════════════════════
+   PARSING
+════════════════════════════════════════ */
+function parseSentences(text) {
+    const chunks = text.split(/(?<=[.?!])\s*/);
+    return chunks.map(chunk => {
+        const parts = chunk.split(/(\s+|[,;:'"«»()\[\]\-—.?!])/).filter(Boolean);
+        return parts
+            .filter(p => !/^\s+$/.test(p))
+            .map(p => ({
+                text: p,
+                isPunct: /^[,;:'"«»()\[\]\-—.?!]$/.test(p),
+                grammaticalCase: ''
+            }));
+    }).filter(s => s.length > 0);
+}
+
+/* ════════════════════════════════════════
+   COL 1 : TOKENISATION
+════════════════════════════════════════ */
+function renderTokenized() {
+    const el = document.getElementById('tokenized-display');
+    el.innerHTML = '';
+    sentences.forEach((sentence, si) => {
+        const sentDiv = document.createElement('div');
+        sentDiv.className       = 'token-sentence';
+        sentDiv.dataset.sentIdx = si;
+        sentence.forEach((tok, ti) => {
+            if (tok.isPunct) {
+                sentDiv.appendChild(document.createTextNode(tok.text + ' '));
+            } else {
+                const span = document.createElement('span');
+                span.className       = 'latin-word';
+                span.textContent     = tok.text;
+                span.dataset.sentIdx = si;
+                span.dataset.tokIdx  = ti;
+                span.addEventListener('dblclick', e => { e.preventDefault(); openPopup(span); });
+                sentDiv.appendChild(span);
+            }
+        });
+        el.appendChild(sentDiv);
+    });
+}
+
+/* ════════════════════════════════════════
+   POPUP
+════════════════════════════════════════ */
+function openPopup(el) {
+    popupTarget = el;
+    const word  = el.textContent.trim();
+    const clean = word.toLowerCase().replace(/[^a-z]/gi, '');
+    document.getElementById('popup-word').textContent = word;
+    document.getElementById('popup-link-gaffiot').href = `https://gaffiot.fr/#${encodeURIComponent(clean)}`;
+    document.getElementById('popup-link-perseus').href = `https://www.perseus.tufts.edu/hopper/morph?l=${encodeURIComponent(clean)}&la=la`;
+    const activeCase = el.dataset.grammaticalCase || '';
+    document.querySelectorAll('.popup-case-btn').forEach(btn =>
+        btn.classList.toggle('active', btn.dataset.case === activeCase)
+    );
+    const overlay = document.getElementById('popup-overlay');
+    const box     = document.getElementById('popup-box');
+    overlay.classList.add('visible');
+    requestAnimationFrame(() => {
+        const rect = el.getBoundingClientRect();
+        let top  = rect.bottom + 8 + window.scrollY;
+        let left = rect.left + window.scrollX;
+        if (left + box.offsetWidth  > window.innerWidth  - 10) left = window.innerWidth  - box.offsetWidth  - 10;
+        if (top  + box.offsetHeight > window.innerHeight + window.scrollY - 10)
+            top = rect.top + window.scrollY - box.offsetHeight - 8;
+        box.style.top  = top  + 'px';
+        box.style.left = left + 'px';
+    });
+}
+function closePopupOverlay(e) { if (e.target === document.getElementById('popup-overlay')) closePopup(); }
+function closePopup() { document.getElementById('popup-overlay').classList.remove('visible'); popupTarget = null; }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePopup(); });
+
+function popupSetCase(caseName) {
+    if (!popupTarget) return;
+    const el = popupTarget;
+    removeColorClasses(el);
+    if (el.dataset.grammaticalCase === caseName) {
+        delete el.dataset.grammaticalCase;
+        updateSentenceData(el, '');
+        document.querySelectorAll('.popup-case-btn').forEach(b => b.classList.remove('active'));
+    } else {
+        el.classList.add('color-' + caseName);
+        el.dataset.grammaticalCase = caseName;
+        updateSentenceData(el, caseName);
+        document.querySelectorAll('.popup-case-btn').forEach(btn =>
+            btn.classList.toggle('active', btn.dataset.case === caseName)
+        );
+    }
+}
+function popupClearCase() {
+    if (!popupTarget) return;
+    removeColorClasses(popupTarget);
+    delete popupTarget.dataset.grammaticalCase;
+    updateSentenceData(popupTarget, '');
+    document.querySelectorAll('.popup-case-btn').forEach(b => b.classList.remove('active'));
+}
+function removeColorClasses(el) {
+    [...el.classList].forEach(c => { if (c.startsWith('color-')) el.classList.remove(c); });
+}
+function updateSentenceData(el, caseName) {
+    const si = parseInt(el.dataset.sentIdx);
+    const ti = parseInt(el.dataset.tokIdx);
+    if (!isNaN(si) && !isNaN(ti) && sentences[si]?.[ti])
+        sentences[si][ti].grammaticalCase = caseName;
+}
+
+/* ════════════════════════════════════════
+   COL 2 : JUXTALATIN
+════════════════════════════════════════ */
+function addJuxtaPair(latinVal = '', frVal = '') {
+    const container = document.getElementById('juxta-pairs');
+    const pair = document.createElement('div');
+    pair.className = 'juxta-pair';
+    pair.innerHTML = `
+        <div class="juxta-cell">
+            <span class="juxta-lang">Latin</span>
+            <textarea class="juxta-input latin-cell" placeholder="texte latin…" rows="2" oninput="autoResize(this)">${latinVal}</textarea>
+        </div>
+        <div class="juxta-cell">
+            <span class="juxta-lang">Français</span>
+            <textarea class="juxta-input fr-cell" placeholder="traduction littérale…" rows="2" oninput="autoResize(this)">${frVal}</textarea>
+        </div>
+        <div class="juxta-pair-actions">
+            <button class="btn-pair-del" onclick="removePair(this)">✕ supprimer</button>
+        </div>`;
+    container.appendChild(pair);
+    pair.querySelector('.latin-cell').focus();
+}
+
+function removePair(btn) {
+    const pair = btn.closest('.juxta-pair');
+    if (document.querySelectorAll('.juxta-pair').length <= 1) {
+        pair.querySelectorAll('textarea').forEach(t => t.value = '');
+    } else {
+        pair.remove();
+    }
+}
+function autoResize(ta) { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; }
+
+/* ════════════════════════════════════════
+   COL 3 : TRADUCTION
+════════════════════════════════════════ */
+function clearTranslation() {
+    if (confirm('Effacer la traduction ?')) document.getElementById('translation-area').value = '';
+}
+function copyTranslation() {
+    const txt = document.getElementById('translation-area').value;
+    if (!txt) return;
+    navigator.clipboard.writeText(txt).then(() => {
+        const btn = event.target; const orig = btn.textContent;
+        btn.textContent = '✓ Copié';
+        setTimeout(() => btn.textContent = orig, 1500);
+    });
+}
+
+/* ════════════════════════════════════════
+   EXPORT HTML
+════════════════════════════════════════ */
+function exportHTML() {
+    // 1. Texte coloré : sérialiser les tokens avec leurs classes
+    let coloredHTML = '';
+    sentences.forEach(sentence => {
+        coloredHTML += '<div class="token-sentence">';
+        sentence.forEach(tok => {
+            if (tok.isPunct) {
+                coloredHTML += tok.text + ' ';
+            } else {
+                const cls = tok.grammaticalCase ? ` class="latin-word color-${tok.grammaticalCase}"` : ' class="latin-word"';
+                coloredHTML += `<span${cls}>${escHTML(tok.text)}</span> `;
+            }
+        });
+        coloredHTML += '</div>';
+    });
+
+    // 2. Paires juxtalatin
+    const pairs = [];
+    document.querySelectorAll('.juxta-pair').forEach(pair => {
+        const lat = pair.querySelector('.latin-cell')?.value.trim() || '';
+        const fr  = pair.querySelector('.fr-cell')?.value.trim()  || '';
+        if (lat || fr) pairs.push({ lat, fr });
+    });
+
+    // 3. Traduction
+    const translation = document.getElementById('translation-area').value.trim();
+
+    // 4. Titre
+    const rawText = document.getElementById('raw-latin-input').value.trim();
+    const shortTitle = rawText.substring(0, 60) + (rawText.length > 60 ? '…' : '');
+
+    // 5. Juxta HTML
+    const juxtaRows = pairs.map(p =>
+        `<tr><td class="juxta-lat">${escHTML(p.lat)}</td><td class="juxta-fr">${escHTML(p.fr)}</td></tr>`
+    ).join('\n        ');
+
+    const doc = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>${escHTML(shortTitle)}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+    --nom:#1a3fcc; --voc:#1a3fcc; --acc:#1e7a35; --gen:#666666;
+    --dat:#b06000; --vrb:#b81414; --inf:#6b1db8; --cco:#c07800; --csu:#007a6e;
+    --ink:#1a1209; --parchment:#fdf6e3; --parchment2:#f5ead0;
+    --stone:#9e8f79; --border:#c9baa0; --accent:#8b3a1e;
+    --font-latin:'Cormorant Garamond', Georgia, serif;
+    --font-ui:'DM Sans', sans-serif;
+}
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:var(--font-ui); background:var(--parchment); color:var(--ink); padding:40px 48px; max-width:920px; margin:0 auto; }
+h1 { font-family:var(--font-latin); font-weight:600; font-size:1.7rem; margin-bottom:4px; letter-spacing:.02em; }
+.doc-meta { font-size:.75rem; color:var(--stone); margin-bottom:36px; }
+section { margin-bottom:40px; }
+.section-title {
+    font-family:var(--font-latin); font-size:.75rem; color:var(--stone);
+    text-transform:uppercase; letter-spacing:.1em; margin-bottom:14px;
+    display:flex; align-items:center; gap:10px;
+}
+.section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* Texte coloré */
+.token-sentence { font-family:var(--font-latin); font-size:1.15rem; line-height:2.2; margin-bottom:8px; padding-bottom:8px; border-bottom:1px dashed #d8cfc0; }
+.token-sentence:last-child { border-bottom:none; }
+.latin-word { display:inline-block; padding:1px 4px; margin:1px; border:1px solid #e0d8cc; border-radius:3px; }
+.color-nominatif { color:var(--nom); border-color:var(--nom); }
+.color-vocatif   { color:var(--voc); border-color:var(--voc); }
+.color-accusatif { color:var(--acc); border-color:var(--acc); }
+.color-genitif   { color:var(--gen); border-color:var(--gen); }
+.color-dat-abl   { color:var(--dat); border-color:var(--dat); }
+.color-verbe     { color:var(--vrb); border-color:var(--vrb); }
+.color-infinitif { color:var(--inf); border-color:var(--inf); font-style:italic; }
+.color-coord  { color:var(--cco); border:2px solid var(--cco); border-radius:12px; padding:1px 8px; }
+.color-subord { color:var(--csu); border:2px solid var(--csu); border-radius:2px; padding:1px 8px; }
+
+/* Légende */
+.legend { display:flex; flex-wrap:wrap; gap:6px; margin-top:16px; }
+.leg { font-size:.7rem; padding:2px 9px; border-radius:12px; border:1px solid; font-family:var(--font-ui); }
+
+/* Juxtalatin */
+.juxta-table { width:100%; border-collapse:collapse; font-family:var(--font-latin); font-size:1rem; }
+.juxta-table thead th { text-align:left; font-size:.68rem; color:var(--stone); text-transform:uppercase; letter-spacing:.07em; padding:4px 10px; border-bottom:2px solid var(--border); font-family:var(--font-ui); }
+.juxta-lat, .juxta-fr { padding:8px 10px; border-bottom:1px solid var(--border); vertical-align:top; width:50%; }
+.juxta-lat { border-right:1px solid var(--border); }
+.juxta-fr  { font-style:italic; color:#444; }
+.juxta-table tr:last-child td { border-bottom:none; }
+
+/* Traduction */
+.translation-text { font-family:var(--font-latin); font-size:1.12rem; line-height:1.95; white-space:pre-wrap; }
+
+footer { margin-top:48px; padding-top:14px; border-top:1px solid var(--border); font-size:.7rem; color:#bbb; text-align:right; }
+@media print { body { padding:20px; } }
+</style>
+</head>
+<body>
+
+<h1>${escHTML(shortTitle)}</h1>
+<p class="doc-meta">Document préparé avec JuxtaLatin — Espace enseignant</p>
+
+<section>
+    <div class="section-title">Texte latin — Code couleur grammatical</div>
+    ${coloredHTML}
+    <div class="legend">
+        <span class="leg" style="color:var(--nom);border-color:var(--nom)">Nominatif</span>
+        <span class="leg" style="color:var(--voc);border-color:var(--voc)">Vocatif</span>
+        <span class="leg" style="color:var(--acc);border-color:var(--acc)">Accusatif</span>
+        <span class="leg" style="color:var(--gen);border-color:var(--gen)">Génitif</span>
+        <span class="leg" style="color:var(--dat);border-color:var(--dat)">Dat./Abl.</span>
+        <span class="leg" style="color:var(--vrb);border-color:var(--vrb)">Verbe</span>
+        <span class="leg" style="color:var(--inf);border-color:var(--inf);font-style:italic">Infinitif</span>
+        <span class="leg" style="color:var(--cco);border:1px solid var(--cco)">Conj. coord.</span>
+        <span class="leg" style="color:var(--csu);border:1px solid var(--csu)">Conj. subord.</span>
+    </div>
+</section>
+
+${pairs.length > 0 ? `<section>
+    <div class="section-title">Juxtalatin latin–français</div>
+    <table class="juxta-table">
+        <thead><tr><th>Latin</th><th>Français</th></tr></thead>
+        <tbody>
+        ${juxtaRows}
+        </tbody>
+    </table>
+</section>` : ''}
+
+${translation ? `<section>
+    <div class="section-title">Traduction</div>
+    <p class="translation-text">${escHTML(translation)}</p>
+</section>` : ''}
+
+<footer>JuxtaLatin — Espace enseignant</footer>
+</body>
+</html>`;
+
+    const blob = new Blob([doc], { type:'text/html;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'juxtalatin-cours.html';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+function escHTML(str) {
+    return String(str)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
