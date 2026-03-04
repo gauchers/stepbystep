@@ -6,38 +6,33 @@
 <title>Step by Step — Espace enseignant</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="../css/style_espace_enseignant.css"/>
 
 </head>
 <body>
 
 <header>
-    <h1>Step by Step</h1>
-    <span class="teacher-badge">Espace enseignant</span>
-    <span class="subtitle">Préparation de corrigé — code couleur · juxtalinéaire · traduction</span>
-    <a href="../index.html" class="nav-link">← Entrée du site</a>
+    <div class="logo">Step <em>by</em> Step</div>
+    <span class="badge">Espace enseignant</span>
+    <span class="subtitle">Préparation de cours — code couleur · juxtalatin · traduction</span>
+    <a href="index.html" class="nav-link">← Accueil</a>
+    <button id="btn-export" onclick="exportHTML()">
+        <svg viewBox="0 0 16 16"><polyline points="8 2 8 11"/><polyline points="4 7 8 11 12 7"/><rect x="2" y="13" width="12" height="1.5" rx="0.5"/></svg>
+        Exporter le texte
+    </button>
 </header>
 
 <section id="deposit-section">
-    <h2>Texte latin</h2>
-    <textarea id="raw-latin-input" placeholder="Collez votre texte latin ici…">Arma virumque cano, Troiae qui primus ab oris Italiam, fato profugus, Lavinaque venit litora.</textarea>
+    <h2>Texte latin à préparer</h2>
+    <textarea id="raw-latin-input" placeholder="Collez votre texte latin ici…"></textarea>
     <div class="dep-btns">
         <button id="btn-deposit" onclick="depositText()">Préparer le texte</button>
         <button id="btn-reset"   onclick="resetAll()">↩ Modifier</button>
-        <button id="btn-export"  onclick="exportHTML()">
-            <svg viewBox="0 0 16 16"><polyline points="8 2 8 11"/><polyline points="4 7 8 11 12 7"/><rect x="2" y="13" width="12" height="1.5" rx="0.5"/></svg>
-            Exporter en HTML
-        </button>
     </div>
 </section>
 
 <div id="main-area">
-
-    <!-- COL 1 : tokenisation + code couleur -->
     <div class="column">
         <div class="col-title">Tokenisation — Code couleur</div>
-                <p id="translation-hint">Double-cliquez sur un mot pour choisir le code couleur à appliquer.</p>
-
         <div id="tokenized-display"></div>
         <div id="color-legend">
             <span class="leg" style="color:var(--nom);border-color:var(--nom)">Nominatif</span>
@@ -51,20 +46,16 @@
             <span class="leg" style="color:var(--csu);border:1px solid var(--csu)">Subord.</span>
         </div>
     </div>
-
-    <!-- COL 2 : juxtalatin -->
-    <div class="column" id="col-juxta">
+    <div class="column">
         <div class="col-title">Juxtalatin latin–français</div>
-        <p class="juxta-hint">Entrez chaque unité latine face à sa traduction littérale. <br>Cliquez sur <strong>+ Ajouter</strong> pour une nouvelle ligne. <br>Conservez de préférence une ligne pour un groupe de mots sans utiliser le saut de paragraphe.</p>
+        <p class="juxta-hint">Entrez chaque segment latin face à sa traduction littérale.</p>
         <div id="juxta-pairs"></div>
         <button id="btn-add-pair" onclick="addJuxtaPair()">+ Ajouter une ligne</button>
     </div>
-
-    <!-- COL 3 : traduction -->
-    <div class="column" id="col-translation">
+    <div class="column">
         <div class="col-title">Traduction</div>
-        <p id="translation-hint">Traduction littéraire ou pédagogique du texte.</p>
-        <textarea id="translation-area" placeholder="Saisissez votre traduction ici…" spellcheck="true"></textarea>
+        <p class="translation-hint">Traduction littéraire ou pédagogique.</p>
+        <textarea id="translation-area" placeholder="Saisissez votre traduction…" spellcheck="true"></textarea>
         <div class="translation-actions">
             <button class="btn-trans danger" onclick="clearTranslation()">✕ Effacer</button>
             <button class="btn-trans"        onclick="copyTranslation()">⎘ Copier</button>
@@ -73,10 +64,9 @@
 </div>
 
 <!-- POPUP -->
-<div class="popup-overlay" id="popup-overlay" onclick="closePopupOverlay(event)">
+<div class="popup-overlay" id="popup-overlay" onclick="if(event.target===this)closePopup()">
     <div class="popup-box" id="popup-box" onclick="event.stopPropagation()">
         <div class="popup-word" id="popup-word"></div>
-
         <div class="popup-section-label">Catégorie grammaticale</div>
         <div class="popup-case-grid">
             <button class="popup-case-btn" data-case="nominatif"  onclick="popupSetCase('nominatif')">Nominatif</button>
@@ -89,17 +79,14 @@
             <button class="popup-case-btn" data-case="coord"      onclick="popupSetCase('coord')">Conj. coord.</button>
             <button class="popup-case-btn" data-case="subord"     onclick="popupSetCase('subord')">Conj. subord.</button>
         </div>
-
         <div class="popup-section-label">Dictionnaire</div>
         <div class="popup-links">
             <a class="popup-link popup-link-gaffiot" id="popup-link-gaffiot" href="#" target="_blank">Gaffiot ↗</a>
         </div>
-
-        <div class="popup-section-label">Aide</div>
+        <div class="popup-section-label">Aide morphologique</div>
         <div class="popup-links">
             <a class="popup-link popup-link-perseus" id="popup-link-perseus" href="#" target="_blank">Perseus Morpheus ↗</a>
         </div>
-
         <div class="popup-actions">
             <button class="popup-btn-sm danger" onclick="popupClearCase()">✕ Effacer couleur</button>
             <button class="popup-btn-sm popup-close" onclick="closePopup()">Fermer</button>
@@ -108,18 +95,18 @@
 </div>
 
 <script>
-/* ════════════════════════════════════════
+/* ============================================================
    ÉTAT
-════════════════════════════════════════ */
-let sentences   = [];
-let popupTarget = null;
+============================================================ */
+var sentences   = [];
+var popupTarget = null;
 
-/* ════════════════════════════════════════
+/* ============================================================
    DÉPÔT
-════════════════════════════════════════ */
+============================================================ */
 function depositText() {
-    const input = document.getElementById('raw-latin-input');
-    const text  = input.value.trim();
+    var input = document.getElementById('raw-latin-input');
+    var text  = input.value.trim();
     if (!text) return;
     input.classList.add('hidden');
     document.getElementById('btn-deposit').style.display = 'none';
@@ -134,12 +121,12 @@ function depositText() {
 }
 
 function fitHeight() {
-    const h = window.innerHeight
-        - document.querySelector('header').offsetHeight
-        - document.getElementById('deposit-section').offsetHeight;
+    var h = window.innerHeight
+          - document.querySelector('header').offsetHeight
+          - document.getElementById('deposit-section').offsetHeight;
     document.getElementById('main-area').style.height = h + 'px';
 }
-window.addEventListener('resize', () => {
+window.addEventListener('resize', function() {
     if (document.getElementById('main-area').classList.contains('visible')) fitHeight();
 });
 
@@ -155,319 +142,393 @@ function resetAll() {
     sentences = []; popupTarget = null;
 }
 
-/* ════════════════════════════════════════
+/* ============================================================
    PARSING
-════════════════════════════════════════ */
+============================================================ */
 function parseSentences(text) {
-    const chunks = text.split(/(?<=[.?!])\s*/);
-    return chunks.map(chunk => {
-        const parts = chunk.split(/(\s+|[,;:'"«»()\[\]\-—.?!])/).filter(Boolean);
+    var chunks = text.split(/(?<=[.?!])\s*/);
+    return chunks.map(function(chunk) {
+        var parts = chunk.split(/(\s+|[,;:'"«»()\[\]\-\u2014.?!])/).filter(Boolean);
         return parts
-            .filter(p => !/^\s+$/.test(p))
-            .map(p => ({
-                text: p,
-                isPunct: /^[,;:'"«»()\[\]\-—.?!]$/.test(p),
-                grammaticalCase: ''
-            }));
-    }).filter(s => s.length > 0);
+            .filter(function(p) { return !/^\s+$/.test(p); })
+            .map(function(p) {
+                return {
+                    text: p,
+                    isPunct: /^[,;:'"«»()\[\]\-\u2014.?!]$/.test(p),
+                    grammaticalCase: ''
+                };
+            });
+    }).filter(function(s) { return s.length > 0; });
 }
 
-/* ════════════════════════════════════════
+/* ============================================================
    COL 1 : TOKENISATION
-════════════════════════════════════════ */
+============================================================ */
 function renderTokenized() {
-    const el = document.getElementById('tokenized-display');
+    var el = document.getElementById('tokenized-display');
     el.innerHTML = '';
-    sentences.forEach((sentence, si) => {
-        const sentDiv = document.createElement('div');
-        sentDiv.className       = 'token-sentence';
-        sentDiv.dataset.sentIdx = si;
-        sentence.forEach((tok, ti) => {
+    sentences.forEach(function(sentence, si) {
+        var div = document.createElement('div');
+        div.className = 'token-sentence';
+        div.dataset.sentIdx = si;
+        sentence.forEach(function(tok, ti) {
             if (tok.isPunct) {
-                sentDiv.appendChild(document.createTextNode(tok.text + ' '));
+                div.appendChild(document.createTextNode(tok.text + ' '));
             } else {
-                const span = document.createElement('span');
-                span.className       = 'latin-word';
-                span.textContent     = tok.text;
+                var span = document.createElement('span');
+                span.className = 'latin-word';
+                span.textContent = tok.text;
                 span.dataset.sentIdx = si;
                 span.dataset.tokIdx  = ti;
-                span.addEventListener('dblclick', e => { e.preventDefault(); openPopup(span); });
-                sentDiv.appendChild(span);
+                span.addEventListener('dblclick', function(e) {
+                    e.preventDefault(); openPopup(span);
+                });
+                div.appendChild(span);
             }
         });
-        el.appendChild(sentDiv);
+        el.appendChild(div);
     });
 }
 
-/* ════════════════════════════════════════
+/* ============================================================
    POPUP
-════════════════════════════════════════ */
+============================================================ */
 function openPopup(el) {
     popupTarget = el;
-    const word  = el.textContent.trim();
-    const clean = word.toLowerCase().replace(/[^a-z]/gi, '');
+    var word  = el.textContent.trim();
+    var clean = word.toLowerCase().replace(/[^a-z]/gi, '');
     document.getElementById('popup-word').textContent = word;
-    document.getElementById('popup-link-gaffiot').href = `https://gaffiot.fr/#${encodeURIComponent(clean)}`;
-    document.getElementById('popup-link-perseus').href = `https://www.perseus.tufts.edu/hopper/morph?l=${encodeURIComponent(clean)}&la=la`;
-    const activeCase = el.dataset.grammaticalCase || '';
-    document.querySelectorAll('.popup-case-btn').forEach(btn =>
-        btn.classList.toggle('active', btn.dataset.case === activeCase)
-    );
-    const overlay = document.getElementById('popup-overlay');
-    const box     = document.getElementById('popup-box');
+    document.getElementById('popup-link-gaffiot').href =
+        'https://gaffiot.fr/#' + encodeURIComponent(clean);
+    document.getElementById('popup-link-perseus').href =
+        'https://www.perseus.tufts.edu/hopper/morph?l=' + encodeURIComponent(clean) + '&la=la';
+    var activeCase = el.dataset.grammaticalCase || '';
+    document.querySelectorAll('.popup-case-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.case === activeCase);
+    });
+    var overlay = document.getElementById('popup-overlay');
+    var box     = document.getElementById('popup-box');
     overlay.classList.add('visible');
-    requestAnimationFrame(() => {
-        const rect = el.getBoundingClientRect();
-        let top  = rect.bottom + 8 + window.scrollY;
-        let left = rect.left + window.scrollX;
-        if (left + box.offsetWidth  > window.innerWidth  - 10) left = window.innerWidth  - box.offsetWidth  - 10;
+    requestAnimationFrame(function() {
+        var rect = el.getBoundingClientRect();
+        var top  = rect.bottom + 8 + window.scrollY;
+        var left = rect.left + window.scrollX;
+        if (left + box.offsetWidth  > window.innerWidth  - 10)
+            left = window.innerWidth  - box.offsetWidth  - 10;
         if (top  + box.offsetHeight > window.innerHeight + window.scrollY - 10)
-            top = rect.top + window.scrollY - box.offsetHeight - 8;
+            top  = rect.top + window.scrollY - box.offsetHeight - 8;
         box.style.top  = top  + 'px';
         box.style.left = left + 'px';
     });
 }
-function closePopupOverlay(e) { if (e.target === document.getElementById('popup-overlay')) closePopup(); }
-function closePopup() { document.getElementById('popup-overlay').classList.remove('visible'); popupTarget = null; }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closePopup(); });
+
+function closePopup() {
+    document.getElementById('popup-overlay').classList.remove('visible');
+    popupTarget = null;
+}
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closePopup();
+});
 
 function popupSetCase(caseName) {
     if (!popupTarget) return;
-    const el = popupTarget;
+    var el = popupTarget;
     removeColorClasses(el);
     if (el.dataset.grammaticalCase === caseName) {
         delete el.dataset.grammaticalCase;
         updateSentenceData(el, '');
-        document.querySelectorAll('.popup-case-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.popup-case-btn').forEach(function(b) {
+            b.classList.remove('active');
+        });
     } else {
         el.classList.add('color-' + caseName);
         el.dataset.grammaticalCase = caseName;
         updateSentenceData(el, caseName);
-        document.querySelectorAll('.popup-case-btn').forEach(btn =>
-            btn.classList.toggle('active', btn.dataset.case === caseName)
-        );
+        document.querySelectorAll('.popup-case-btn').forEach(function(btn) {
+            btn.classList.toggle('active', btn.dataset.case === caseName);
+        });
     }
 }
+
 function popupClearCase() {
     if (!popupTarget) return;
     removeColorClasses(popupTarget);
     delete popupTarget.dataset.grammaticalCase;
     updateSentenceData(popupTarget, '');
-    document.querySelectorAll('.popup-case-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.popup-case-btn').forEach(function(b) {
+        b.classList.remove('active');
+    });
 }
+
 function removeColorClasses(el) {
-    [...el.classList].forEach(c => { if (c.startsWith('color-')) el.classList.remove(c); });
+    Array.from(el.classList).forEach(function(c) {
+        if (c.startsWith('color-')) el.classList.remove(c);
+    });
 }
+
 function updateSentenceData(el, caseName) {
-    const si = parseInt(el.dataset.sentIdx);
-    const ti = parseInt(el.dataset.tokIdx);
-    if (!isNaN(si) && !isNaN(ti) && sentences[si]?.[ti])
+    var si = parseInt(el.dataset.sentIdx);
+    var ti = parseInt(el.dataset.tokIdx);
+    if (!isNaN(si) && !isNaN(ti) && sentences[si] && sentences[si][ti])
         sentences[si][ti].grammaticalCase = caseName;
 }
 
-/* ════════════════════════════════════════
+/* ============================================================
    COL 2 : JUXTALATIN
-════════════════════════════════════════ */
-function addJuxtaPair(latinVal = '', frVal = '') {
-    const container = document.getElementById('juxta-pairs');
-    const pair = document.createElement('div');
+============================================================ */
+function addJuxtaPair(latinVal, frVal) {
+    if (latinVal === undefined) latinVal = '';
+    if (frVal    === undefined) frVal    = '';
+    var container = document.getElementById('juxta-pairs');
+    var pair = document.createElement('div');
     pair.className = 'juxta-pair';
-    pair.innerHTML = `
-        <div class="juxta-cell">
-            <span class="juxta-lang">Latin</span>
-            <textarea class="juxta-input latin-cell" placeholder="texte latin…" rows="2" oninput="autoResize(this)">${latinVal}</textarea>
-        </div>
-        <div class="juxta-cell">
-            <span class="juxta-lang">Français</span>
-            <textarea class="juxta-input fr-cell" placeholder="traduction littérale…" rows="2" oninput="autoResize(this)">${frVal}</textarea>
-        </div>
-        <div class="juxta-pair-actions">
-            <button class="btn-pair-del" onclick="removePair(this)">✕ supprimer</button>
-        </div>`;
+
+    var cellLat = document.createElement('div');
+    cellLat.className = 'juxta-cell';
+    var langLat = document.createElement('span');
+    langLat.className = 'juxta-lang';
+    langLat.textContent = 'Latin';
+    var taLat = document.createElement('textarea');
+    taLat.className   = 'juxta-input latin-cell';
+    taLat.placeholder = 'texte latin…';
+    taLat.rows        = 2;
+    taLat.value       = latinVal;
+    taLat.addEventListener('input', function() { autoResize(taLat); });
+    cellLat.appendChild(langLat);
+    cellLat.appendChild(taLat);
+
+    var cellFr = document.createElement('div');
+    cellFr.className = 'juxta-cell';
+    var langFr = document.createElement('span');
+    langFr.className = 'juxta-lang';
+    langFr.textContent = 'Français';
+    var taFr = document.createElement('textarea');
+    taFr.className   = 'juxta-input fr-cell';
+    taFr.placeholder = 'traduction littérale…';
+    taFr.rows        = 2;
+    taFr.value       = frVal;
+    taFr.addEventListener('input', function() { autoResize(taFr); });
+    cellFr.appendChild(langFr);
+    cellFr.appendChild(taFr);
+
+    var actions = document.createElement('div');
+    actions.className = 'juxta-pair-actions';
+    var delBtn = document.createElement('button');
+    delBtn.className   = 'btn-pair-del';
+    delBtn.textContent = '✕ supprimer';
+    delBtn.addEventListener('click', function() { removePair(delBtn); });
+    actions.appendChild(delBtn);
+
+    pair.appendChild(cellLat);
+    pair.appendChild(cellFr);
+    pair.appendChild(actions);
     container.appendChild(pair);
-    pair.querySelector('.latin-cell').focus();
+    taLat.focus();
 }
 
 function removePair(btn) {
-    const pair = btn.closest('.juxta-pair');
+    var pair = btn.closest('.juxta-pair');
     if (document.querySelectorAll('.juxta-pair').length <= 1) {
-        pair.querySelectorAll('textarea').forEach(t => t.value = '');
+        pair.querySelectorAll('textarea').forEach(function(t) { t.value = ''; });
     } else {
         pair.remove();
     }
 }
-function autoResize(ta) { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; }
 
-/* ════════════════════════════════════════
+function autoResize(ta) {
+    ta.style.height = 'auto';
+    ta.style.height = ta.scrollHeight + 'px';
+}
+
+/* ============================================================
    COL 3 : TRADUCTION
-════════════════════════════════════════ */
+============================================================ */
 function clearTranslation() {
-    if (confirm('Effacer la traduction ?')) document.getElementById('translation-area').value = '';
+    if (confirm('Effacer la traduction ?'))
+        document.getElementById('translation-area').value = '';
 }
 function copyTranslation() {
-    const txt = document.getElementById('translation-area').value;
+    var txt = document.getElementById('translation-area').value;
     if (!txt) return;
-    navigator.clipboard.writeText(txt).then(() => {
-        const btn = event.target; const orig = btn.textContent;
+    navigator.clipboard.writeText(txt).then(function() {
+        var btn  = event.target;
+        var orig = btn.textContent;
         btn.textContent = '✓ Copié';
-        setTimeout(() => btn.textContent = orig, 1500);
+        setTimeout(function() { btn.textContent = orig; }, 1500);
     });
 }
 
-/* ════════════════════════════════════════
+/* ============================================================
    EXPORT HTML
-════════════════════════════════════════ */
+   Pas de template literals imbriqués : on construit le HTML
+   par concaténation de chaînes ordinaires.
+============================================================ */
 function exportHTML() {
-    // 1. Texte coloré : sérialiser les tokens avec leurs classes
-    let coloredHTML = '';
-    sentences.forEach(sentence => {
+
+    /* 1. Sérialiser les tokens avec leurs couleurs */
+    var coloredHTML = '';
+    sentences.forEach(function(sentence) {
         coloredHTML += '<div class="token-sentence">';
-        sentence.forEach(tok => {
+        sentence.forEach(function(tok) {
             if (tok.isPunct) {
-                coloredHTML += tok.text + ' ';
+                coloredHTML += esc(tok.text) + ' ';
             } else {
-                const cls = tok.grammaticalCase ? ` class="latin-word color-${tok.grammaticalCase}"` : ' class="latin-word"';
-                coloredHTML += `<span${cls}>${escHTML(tok.text)}</span> `;
+                var cls = tok.grammaticalCase
+                    ? 'latin-word color-' + tok.grammaticalCase
+                    : 'latin-word';
+                coloredHTML += '<span class="' + cls + '">' + esc(tok.text) + '</span> ';
             }
         });
-        coloredHTML += '</div>';
+        coloredHTML += '</div>\n';
     });
 
-    // 2. Paires juxtalatin
-    const pairs = [];
-    document.querySelectorAll('.juxta-pair').forEach(pair => {
-        const lat = pair.querySelector('.latin-cell')?.value.trim() || '';
-        const fr  = pair.querySelector('.fr-cell')?.value.trim()  || '';
-        if (lat || fr) pairs.push({ lat, fr });
+    /* 2. Paires juxtalatin */
+    var pairs = [];
+    document.querySelectorAll('.juxta-pair').forEach(function(pair) {
+        var lat = (pair.querySelector('.latin-cell') || {}).value || '';
+        var fr  = (pair.querySelector('.fr-cell')    || {}).value || '';
+        lat = lat.trim(); fr = fr.trim();
+        if (lat || fr) pairs.push({ lat: lat, fr: fr });
     });
 
-    // 3. Traduction
-    const translation = document.getElementById('translation-area').value.trim();
+    /* 3. Traduction */
+    var translation = document.getElementById('translation-area').value.trim();
 
-    // 4. Titre
-    const rawText = document.getElementById('raw-latin-input').value.trim();
-    const shortTitle = rawText.substring(0, 60) + (rawText.length > 60 ? '…' : '');
+    /* 4. Titre depuis le texte brut */
+    var rawText    = document.getElementById('raw-latin-input').value.trim();
+    var shortTitle = rawText.substring(0, 60) + (rawText.length > 60 ? '\u2026' : '');
 
-    // 5. Juxta HTML
-    const juxtaRows = pairs.map(p =>
-        `<tr><td class="juxta-lat">${escHTML(p.lat)}</td><td class="juxta-fr">${escHTML(p.fr)}</td></tr>`
-    ).join('\n        ');
+    /* 5. JSON de correction à embarquer */
+    var correctionData = {
+        title:       shortTitle,
+        sentences:   sentences,
+        juxtaPairs:  pairs,
+        translation: translation
+    };
+    var corrJSON = JSON.stringify(correctionData);
 
-    const doc = `<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>${escHTML(shortTitle)}</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-<style>
-:root {
-    --nom:#1a3fcc; --voc:#1a3fcc; --acc:#1e7a35; --gen:#666666;
-    --dat:#b06000; --vrb:#b81414; --inf:#6b1db8; --cco:#c07800; --csu:#007a6e;
-    --ink:#1a1209; --parchment:#fdf6e3; --parchment2:#f5ead0;
-    --stone:#9e8f79; --border:#c9baa0; --accent:#8b3a1e;
-    --font-latin:'Cormorant Garamond', Georgia, serif;
-    --font-ui:'DM Sans', sans-serif;
-}
-*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { font-family:var(--font-ui); background:var(--parchment); color:var(--ink); padding:40px 48px; max-width:920px; margin:0 auto; }
-h1 { font-family:var(--font-latin); font-weight:600; font-size:1.7rem; margin-bottom:4px; letter-spacing:.02em; }
-.doc-meta { font-size:.75rem; color:var(--stone); margin-bottom:36px; }
-section { margin-bottom:40px; }
-.section-title {
-    font-family:var(--font-latin); font-size:.75rem; color:var(--stone);
-    text-transform:uppercase; letter-spacing:.1em; margin-bottom:14px;
-    display:flex; align-items:center; gap:10px;
-}
-.section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+    /* 6. Lignes du tableau juxtalatin */
+    var juxtaRows = '';
+    pairs.forEach(function(p) {
+        juxtaRows += '<tr>'
+            + '<td class="juxta-lat">' + esc(p.lat) + '</td>'
+            + '<td class="juxta-fr">'  + esc(p.fr)  + '</td>'
+            + '</tr>\n';
+    });
 
-/* Texte coloré */
-.token-sentence { font-family:var(--font-latin); font-size:1.15rem; line-height:2.2; margin-bottom:8px; padding-bottom:8px; border-bottom:1px dashed #d8cfc0; }
-.token-sentence:last-child { border-bottom:none; }
-.latin-word { display:inline-block; padding:1px 4px; margin:1px; border:1px solid #e0d8cc; border-radius:3px; }
-.color-nominatif { color:var(--nom); border-color:var(--nom); }
-.color-vocatif   { color:var(--voc); border-color:var(--voc); }
-.color-accusatif { color:var(--acc); border-color:var(--acc); }
-.color-genitif   { color:var(--gen); border-color:var(--gen); }
-.color-dat-abl   { color:var(--dat); border-color:var(--dat); }
-.color-verbe     { color:var(--vrb); border-color:var(--vrb); }
-.color-infinitif { color:var(--inf); border-color:var(--inf); font-style:italic; }
-.color-coord  { color:var(--cco); border:2px solid var(--cco); border-radius:12px; padding:1px 8px; }
-.color-subord { color:var(--csu); border:2px solid var(--csu); border-radius:2px; padding:1px 8px; }
+    /* 7. Section juxtalatin (vide si aucune paire) */
+    var juxtaSection = '';
+    if (pairs.length > 0) {
+        juxtaSection = '<section>\n'
+            + '<div class="section-title">Juxtalatin latin\u2013fran\u00e7ais</div>\n'
+            + '<table class="juxta-table">\n'
+            + '<thead><tr><th>Latin</th><th>Fran\u00e7ais</th></tr></thead>\n'
+            + '<tbody>\n' + juxtaRows + '</tbody>\n'
+            + '</table>\n</section>\n';
+    }
 
-/* Légende */
-.legend { display:flex; flex-wrap:wrap; gap:6px; margin-top:16px; }
-.leg { font-size:.7rem; padding:2px 9px; border-radius:12px; border:1px solid; font-family:var(--font-ui); }
+    /* 8. Section traduction */
+    var transSection = '';
+    if (translation) {
+        transSection = '<section>\n'
+            + '<div class="section-title">Traduction</div>\n'
+            + '<p class="translation-text">' + esc(translation) + '</p>\n'
+            + '</section>\n';
+    }
 
-/* Juxtalatin */
-.juxta-table { width:100%; border-collapse:collapse; font-family:var(--font-latin); font-size:1rem; }
-.juxta-table thead th { text-align:left; font-size:.68rem; color:var(--stone); text-transform:uppercase; letter-spacing:.07em; padding:4px 10px; border-bottom:2px solid var(--border); font-family:var(--font-ui); }
-.juxta-lat, .juxta-fr { padding:8px 10px; border-bottom:1px solid var(--border); vertical-align:top; width:50%; }
-.juxta-lat { border-right:1px solid var(--border); }
-.juxta-fr  { font-style:italic; color:#444; }
-.juxta-table tr:last-child td { border-bottom:none; }
+    /* 9. CSS pour le fichier exporté (sans backticks) */
+    var exportCSS = [
+        ':root{',
+        '--nom:#1a3fcc;--voc:#1a3fcc;--acc:#1e7a35;--gen:#666666;',
+        '--dat:#b06000;--vrb:#b81414;--inf:#6b1db8;--cco:#c07800;--csu:#007a6e;',
+        '--ink:#1a1209;--parchment:#fdf6e3;--parchment2:#f5ead0;',
+        '--stone:#9e8f79;--border:#c9baa0;--accent:#8b3a1e;',
+        '--font-latin:\'Cormorant Garamond\',Georgia,serif;',
+        '--font-ui:\'DM Sans\',sans-serif;}',
+        '*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}',
+        'body{font-family:var(--font-ui);background:var(--parchment);color:var(--ink);padding:40px 48px;max-width:920px;margin:0 auto;}',
+        'h1{font-family:var(--font-latin);font-weight:600;font-size:1.7rem;margin-bottom:4px;letter-spacing:.02em;}',
+        '.doc-meta{font-size:.75rem;color:var(--stone);margin-bottom:36px;}',
+        'section{margin-bottom:40px;}',
+        '.section-title{font-family:var(--font-latin);font-size:.75rem;color:var(--stone);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;display:flex;align-items:center;gap:10px;}',
+        '.section-title::after{content:"";flex:1;height:1px;background:var(--border);}',
+        '.token-sentence{font-family:var(--font-latin);font-size:1.15rem;line-height:2.2;margin-bottom:8px;padding-bottom:8px;border-bottom:1px dashed #d8cfc0;}',
+        '.token-sentence:last-child{border-bottom:none;}',
+        '.latin-word{display:inline-block;padding:1px 4px;margin:1px;border:1px solid #e0d8cc;border-radius:3px;}',
+        '.color-nominatif{color:var(--nom);border-color:var(--nom);}',
+        '.color-vocatif{color:var(--voc);border-color:var(--voc);}',
+        '.color-accusatif{color:var(--acc);border-color:var(--acc);}',
+        '.color-genitif{color:var(--gen);border-color:var(--gen);}',
+        '.color-dat-abl{color:var(--dat);border-color:var(--dat);}',
+        '.color-verbe{color:var(--vrb);border-color:var(--vrb);}',
+        '.color-infinitif{color:var(--inf);border-color:var(--inf);font-style:italic;}',
+        '.color-coord{color:var(--cco);border:2px solid var(--cco);border-radius:12px;padding:1px 8px;}',
+        '.color-subord{color:var(--csu);border:2px solid var(--csu);border-radius:2px;padding:1px 8px;}',
+        '.legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;}',
+        '.leg{font-size:.7rem;padding:2px 9px;border-radius:12px;border:1px solid;font-family:var(--font-ui);}',
+        '.juxta-table{width:100%;border-collapse:collapse;font-family:var(--font-latin);font-size:1rem;}',
+        '.juxta-table thead th{text-align:left;font-size:.68rem;color:var(--stone);text-transform:uppercase;letter-spacing:.07em;padding:4px 10px;border-bottom:2px solid var(--border);font-family:var(--font-ui);}',
+        '.juxta-lat,.juxta-fr{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top;width:50%;}',
+        '.juxta-lat{border-right:1px solid var(--border);}',
+        '.juxta-fr{font-style:italic;color:#444;}',
+        '.translation-text{font-family:var(--font-latin);font-size:1.12rem;line-height:1.95;white-space:pre-wrap;}',
+        'footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--border);font-size:.7rem;color:#bbb;text-align:right;}',
+        '@media print{body{padding:20px;}}'
+    ].join('\n');
 
-/* Traduction */
-.translation-text { font-family:var(--font-latin); font-size:1.12rem; line-height:1.95; white-space:pre-wrap; }
+    /* 10. Assembler le document complet */
+    var doc = '<!DOCTYPE html>\n'
+        + '<html lang="fr">\n<head>\n'
+        + '<meta charset="UTF-8"/>\n'
+        + '<meta name="viewport" content="width=device-width, initial-scale=1.0"/>\n'
+        + '<title>' + esc(shortTitle) + '</title>\n'
+        + '<link rel="preconnect" href="https://fonts.googleapis.com"/>\n'
+        + '<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>\n'
+        + '<style>\n' + exportCSS + '\n</style>\n'
+        + '</head>\n<body>\n'
+        + '\n<!-- Donn\u00e9es de correction pour l\'espace \u00e9tudiant -->\n'
+        + '<script id="correction-data" type="application/json">\n'
+        + corrJSON + '\n'
+        + '<' + '/script>\n\n'
+        + '<h1>' + esc(shortTitle) + '</h1>\n'
+        + '<p class="doc-meta">Pr\u00e9par\u00e9 avec Step by Step \u2014 Espace enseignant</p>\n\n'
+        + '<section>\n'
+        + '<div class="section-title">Texte latin \u2014 Code couleur grammatical</div>\n'
+        + coloredHTML
+        + '<div class="legend">\n'
+        + '<span class="leg" style="color:var(--nom);border-color:var(--nom)">Nominatif</span>\n'
+        + '<span class="leg" style="color:var(--voc);border-color:var(--voc)">Vocatif</span>\n'
+        + '<span class="leg" style="color:var(--acc);border-color:var(--acc)">Accusatif</span>\n'
+        + '<span class="leg" style="color:var(--gen);border-color:var(--gen)">G\u00e9nitif</span>\n'
+        + '<span class="leg" style="color:var(--dat);border-color:var(--dat)">Dat./Abl.</span>\n'
+        + '<span class="leg" style="color:var(--vrb);border-color:var(--vrb)">Verbe</span>\n'
+        + '<span class="leg" style="color:var(--inf);border-color:var(--inf);font-style:italic">Infinitif</span>\n'
+        + '<span class="leg" style="color:var(--cco);border:1px solid var(--cco)">Coord.</span>\n'
+        + '<span class="leg" style="color:var(--csu);border:1px solid var(--csu)">Subord.</span>\n'
+        + '</div>\n</section>\n\n'
+        + juxtaSection
+        + transSection
+        + '<footer>Step by Step \u2014 Espace enseignant</footer>\n'
+        + '</body>\n</html>';
 
-footer { margin-top:48px; padding-top:14px; border-top:1px solid var(--border); font-size:.7rem; color:#bbb; text-align:right; }
-@media print { body { padding:20px; } }
-</style>
-</head>
-<body>
-
-<h1>${escHTML(shortTitle)}</h1>
-<p class="doc-meta">Document préparé avec JuxtaLatin — Espace enseignant</p>
-
-<section>
-    <div class="section-title">Texte latin — Code couleur grammatical</div>
-    ${coloredHTML}
-    <div class="legend">
-        <span class="leg" style="color:var(--nom);border-color:var(--nom)">Nominatif</span>
-        <span class="leg" style="color:var(--voc);border-color:var(--voc)">Vocatif</span>
-        <span class="leg" style="color:var(--acc);border-color:var(--acc)">Accusatif</span>
-        <span class="leg" style="color:var(--gen);border-color:var(--gen)">Génitif</span>
-        <span class="leg" style="color:var(--dat);border-color:var(--dat)">Dat./Abl.</span>
-        <span class="leg" style="color:var(--vrb);border-color:var(--vrb)">Verbe</span>
-        <span class="leg" style="color:var(--inf);border-color:var(--inf);font-style:italic">Infinitif</span>
-        <span class="leg" style="color:var(--cco);border:1px solid var(--cco)">Conj. coord.</span>
-        <span class="leg" style="color:var(--csu);border:1px solid var(--csu)">Conj. subord.</span>
-    </div>
-</section>
-
-${pairs.length > 0 ? `<section>
-    <div class="section-title">Juxtalatin latin–français</div>
-    <table class="juxta-table">
-        <thead><tr><th>Latin</th><th>Français</th></tr></thead>
-        <tbody>
-        ${juxtaRows}
-        </tbody>
-    </table>
-</section>` : ''}
-
-${translation ? `<section>
-    <div class="section-title">Traduction</div>
-    <p class="translation-text">${escHTML(translation)}</p>
-</section>` : ''}
-
-<footer>JuxtaLatin — Espace enseignant</footer>
-</body>
-</html>`;
-
-    const blob = new Blob([doc], { type:'text/html;charset=utf-8' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
+    var blob = new Blob([doc], { type: 'text/html;charset=utf-8' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
     a.href     = url;
-    a.download = 'juxtalatin-cours.html';
+    a.download = 'texte.html';
     a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    setTimeout(function() { URL.revokeObjectURL(url); }, 2000);
 }
 
-function escHTML(str) {
-    return String(str)
-        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+/* ============================================================
+   UTILITAIRES
+============================================================ */
+function esc(s) {
+    return String(s)
+        .replace(/&/g,  '&amp;')
+        .replace(/</g,  '&lt;')
+        .replace(/>/g,  '&gt;')
+        .replace(/"/g,  '&quot;');
 }
 </script>
 </body>
