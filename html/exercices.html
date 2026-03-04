@@ -135,13 +135,7 @@ footer a:hover{text-decoration:underline;}
      Le corrigé dans :
        html/espace_etudiant/correction/FICHIER.html
 ════════════════════════════════════════════════════════ -->
-<div class="add-note">
-    <strong>Pour ajouter un exercice :</strong> copiez un bloc <code>.ex-card</code> ci-dessous,
-    renseignez <code>data-fichier</code>, l'initiale, l'auteur et le titre.
-    Le fichier doit être dans <code>html/textes/FICHIER.html</code>
-    (exporté par l'espace enseignant — contient à la fois le corrigé et le support étudiant).
-    Supprimez cette note en production.
-</div>
+
 
 <div class="exercises-grid" id="exercises-grid">
 
@@ -165,49 +159,7 @@ footer a:hover{text-decoration:underline;}
         </div>
     </div>
 
-    <div class="ex-card"
-         data-fichier="ciceron_catilina_1"
-         onclick="openExercise(this)">
-        <div class="ex-card-body">
-            <div class="ex-avatar">C</div>
-            <div class="ex-author">Cicéron</div>
-            <div class="ex-title">Catilinaires, I, 1</div>
-        </div>
-        <div class="ex-card-footer">
-            <span class="ex-level level-2">Intermédiaire</span>
-            <span class="ex-open">Ouvrir <svg viewBox="0 0 12 12"><polyline points="4 2 10 6 4 10"/></svg></span>
-        </div>
-    </div>
-
-    <div class="ex-card"
-         data-fichier="ovide_metamorphoses_1"
-         onclick="openExercise(this)">
-        <div class="ex-card-body">
-            <div class="ex-avatar">O</div>
-            <div class="ex-author">Ovide</div>
-            <div class="ex-title">Métamorphoses, I, 1–4</div>
-        </div>
-        <div class="ex-card-footer">
-            <span class="ex-level level-2">Intermédiaire</span>
-            <span class="ex-open">Ouvrir <svg viewBox="0 0 12 12"><polyline points="4 2 10 6 4 10"/></svg></span>
-        </div>
-    </div>
-
-    <div class="ex-card"
-         data-fichier="tacite_annales_1"
-         onclick="openExercise(this)">
-        <div class="ex-card-body">
-            <div class="ex-avatar">T</div>
-            <div class="ex-author">Tacite</div>
-            <div class="ex-title">Annales, I, 1</div>
-        </div>
-        <div class="ex-card-footer">
-            <span class="ex-level level-3">Avancé</span>
-            <span class="ex-open">Ouvrir <svg viewBox="0 0 12 12"><polyline points="4 2 10 6 4 10"/></svg></span>
-        </div>
-    </div>
-
-    <!-- Carte placeholder — montre qu'il y aura d'autres exercices -->
+        <!-- Carte placeholder — montre qu'il y aura d'autres exercices -->
     <div class="ex-card-empty">
         <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="12"/><line x1="16" y1="10" x2="16" y2="22"/><line x1="10" y1="16" x2="22" y2="16"/></svg>
         Prochain exercice<br>à venir…
