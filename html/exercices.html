@@ -19,7 +19,6 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--font-ui);background:var(--parchment);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;}
-
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     background-image:radial-gradient(ellipse 60% 40% at 15% 85%,rgba(26,58,92,.05) 0%,transparent 60%),
     radial-gradient(ellipse 50% 50% at 85% 15%,rgba(26,92,58,.04) 0%,transparent 60%);}
@@ -38,40 +37,34 @@ header{position:relative;z-index:1;background:var(--ink);color:var(--parchment);
 .intro h2{font-family:var(--font-latin);font-weight:400;font-size:1.7rem;margin-bottom:8px;letter-spacing:.02em;}
 .intro p{font-size:.84rem;color:var(--stone);max-width:480px;margin:0 auto;line-height:1.7;}
 
-/* ── BARRE FILTRE (facultative pour l'avenir) ── */
+/* ── BARRE FILTRE ── */
 .filter-bar{position:relative;z-index:1;display:flex;gap:8px;justify-content:center;padding:0 40px 22px;flex-wrap:wrap;}
 .filter-btn{padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:#fff;font-family:var(--font-ui);font-size:.74rem;cursor:pointer;color:var(--stone);transition:all .18s;}
 .filter-btn:hover,.filter-btn.active{background:var(--corr);color:#fff;border-color:var(--corr);}
 
-/* ── GRILLE EXERCICES ── */
+/* ── GRILLE ── */
 .exercises-grid{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:20px;justify-content:center;padding:0 40px 60px;flex:1;align-content:flex-start;}
 
-/* ── CARTE EXERCICE ── */
+/* ── CARTE ── */
 .ex-card{
-    width:210px; text-decoration:none; color:inherit;
+    width:210px;text-decoration:none;color:inherit;
     display:flex;flex-direction:column;
     background:#fff;border:1px solid var(--border);border-radius:var(--radius);
     border-top:4px solid var(--corr);
     box-shadow:0 2px 10px rgba(0,0,0,.05);
-    transition:all .22s ease; overflow:hidden; cursor:pointer;
+    transition:all .22s ease;overflow:hidden;cursor:pointer;
 }
 .ex-card:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(26,58,92,.13);border-color:var(--corr);}
-
 .ex-card-body{padding:20px 18px 14px;flex:1;}
-
-/* Icône auteur (initiale stylisée) */
 .ex-avatar{
     width:42px;height:42px;border-radius:10px;
     display:flex;align-items:center;justify-content:center;
     font-family:var(--font-latin);font-size:1.3rem;font-weight:600;
     margin-bottom:14px;
-    background:var(--corr-lt);color:var(--corr);
-    flex-shrink:0;
+    background:var(--corr-lt);color:var(--corr);flex-shrink:0;
 }
-
 .ex-author{font-size:.68rem;color:var(--stone);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;}
 .ex-title{font-family:var(--font-latin);font-size:1.05rem;font-weight:600;line-height:1.3;color:var(--ink);}
-
 .ex-card-footer{
     padding:9px 18px;border-top:1px solid var(--border);
     background:var(--parchment2);
@@ -80,29 +73,21 @@ header{position:relative;z-index:1;background:var(--ink);color:var(--parchment);
 .ex-open{font-size:.7rem;color:var(--corr);font-weight:500;display:flex;align-items:center;gap:4px;transition:gap .2s;}
 .ex-card:hover .ex-open{gap:7px;}
 .ex-open svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-
-/* Badge difficulté optionnel */
 .ex-level{font-size:.62rem;padding:2px 7px;border-radius:20px;border:1px solid;}
 .level-1{color:var(--student);border-color:var(--student);background:var(--student-lt);}
 .level-2{color:#7a5c00;border-color:#c09000;background:#fdf5d6;}
 .level-3{color:var(--accent);border-color:var(--accent);background:var(--accent-lt);}
 
-/* ── CARTE "VIDE" (placeholder à supprimer) ── */
+/* ── CARTE VIDE ── */
 .ex-card-empty{
     width:210px;height:160px;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     border:2px dashed var(--border);border-radius:var(--radius);
-    color:var(--stone-lt);font-size:.78rem;font-style:italic;gap:8px;
-    cursor:default;
+    color:var(--stone-lt);font-size:.78rem;font-style:italic;gap:8px;cursor:default;
 }
 .ex-card-empty svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.5;opacity:.5;}
 
-/* ── FOOTER ── */
-footer{position:relative;z-index:1;text-align:center;padding:16px 40px;border-top:1px solid var(--border);font-size:.71rem;color:var(--stone-lt);}
-footer a{color:var(--stone);text-decoration:none;}
-footer a:hover{text-decoration:underline;}
-
-/* ── NOTE AJOUT ── */
+/* ── NOTE ENSEIGNANT ── */
 .add-note{
     position:relative;z-index:1;
     background:var(--corr-lt);border:1px solid #b0c8e0;border-radius:var(--radius);
@@ -110,6 +95,11 @@ footer a:hover{text-decoration:underline;}
     font-size:.75rem;color:var(--corr);line-height:1.6;
 }
 .add-note code{background:rgba(26,58,92,.08);border-radius:3px;padding:1px 5px;font-size:.72rem;}
+
+/* ── FOOTER ── */
+footer{position:relative;z-index:1;text-align:center;padding:16px 40px;border-top:1px solid var(--border);font-size:.71rem;color:var(--stone-lt);}
+footer a{color:var(--stone);text-decoration:none;}
+footer a:hover{text-decoration:underline;}
 </style>
 </head>
 <body>
@@ -125,26 +115,30 @@ footer a:hover{text-decoration:underline;}
     <p>Cliquez sur un texte pour ouvrir l'espace de travail. Vous pourrez consulter le corrigé colonne par colonne.</p>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════
-     NOTE POUR L'ENSEIGNANT (à supprimer en production)
-     Pour ajouter un exercice, copiez un bloc .ex-card
-     et renseignez : data-fichier, l'initiale .ex-avatar,
-     .ex-author et .ex-title.
-     Le fichier étudiant doit être dans :
-       html/espace_etudiant/textes/FICHIER.html
-     Le corrigé dans :
-       html/espace_etudiant/correction/FICHIER.html
-════════════════════════════════════════════════════════ -->
-
+<!--
+════════════════════════════════════════════════════════
+  NOTE ENSEIGNANT — comment ajouter un exercice
+  ─────────────────────────────────────────────────────
+  1. Dans espace_enseignant.html :
+       • Remplissez Titre, Auteur et Nom du fichier export
+       • Préparez le texte, annotez, remplissez le juxtalatin et la traduction
+       • Cliquez "Exporter le texte"
+  2. Déposez le fichier téléchargé dans :
+         html/textes/VOTREFICHIER.html
+  3. Copiez un bloc .ex-card ci-dessous et renseignez :
+       • data-fichier   = nom du fichier SANS .html
+       • .ex-avatar     = initiale de l'auteur
+       • .ex-author     = nom de l'auteur
+       • .ex-title      = titre du texte
+       • .ex-level      = level-1 / level-2 / level-3
+════════════════════════════════════════════════════════
+-->
 
 <div class="exercises-grid" id="exercises-grid">
 
-    <!-- ══════════════════════════════════════════
-         EXERCICES — à dupliquer pour chaque texte
-         Attribut data-fichier = nom du fichier sans .html
-         ex: data-fichier="virgile_eneide_1"
-    ══════════════════════════════════════════ -->
-
+    <!-- ══ EXERCICE 1 ══════════════════════════════════════
+         data-fichier = nom du fichier dans html/textes/
+    ═══════════════════════════════════════════════════ -->
     <div class="ex-card"
          data-fichier="cesar_gaules_06_17"
          onclick="openExercise(this)">
@@ -159,7 +153,7 @@ footer a:hover{text-decoration:underline;}
         </div>
     </div>
 
-        <!-- Carte placeholder — montre qu'il y aura d'autres exercices -->
+    <!-- Carte placeholder -->
     <div class="ex-card-empty">
         <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="12"/><line x1="16" y1="10" x2="16" y2="22"/><line x1="10" y1="16" x2="22" y2="16"/></svg>
         Prochain exercice<br>à venir…
@@ -173,24 +167,32 @@ footer a:hover{text-decoration:underline;}
 
 <script>
 /*
-    openExercise(card)
-    Construit l'URL de la page étudiant à partir de data-fichier
-    et ouvre dans un nouvel onglet.
+  openExercise(card)
+  ──────────────────────────────────────────────────────────
+  Les fichiers étudiants (exports de espace_enseignant.html)
+  doivent être placés dans : html/textes/FICHIER.html
 
-    Structure attendue sur GitHub Pages :
-      /html/espace_etudiant/textes/FICHIER.html   ← page étudiant
-      /html/espace_etudiant/correction/FICHIER.html ← corrigé enseignant
+  Structure du dépôt GitHub :
+    stepbystep/
+    ├── index.html
+    └── html/
+        ├── bac_a_sable.html
+        ├── espace_enseignant.html
+        ├── exercices.html
+        └── textes/
+            ├── cesar_gaules_06_17.html
+            └── ...
 */
 function openExercise(card) {
-    const fichier = card.dataset.fichier;
+    var fichier = card.dataset.fichier;
     if (!fichier) return;
 
-    // Calcul de la base du site (fonctionne en local et sur GitHub Pages)
-    const base = window.location.pathname
-        .replace(/\/html\/exercices\.html$/, '')   // si appelé depuis /html/
-        .replace(/\/exercices\.html$/, '');         // si appelé depuis la racine
-
-    const url = base + '/html/textes/' + fichier + '.html';
+    // Construit l'URL robuste depuis n'importe quel contexte
+    // (local, GitHub Pages sous-répertoire, domaine racine)
+    var path = window.location.pathname;
+    // Retire le nom du fichier courant pour obtenir le dossier html/
+    var base = path.substring(0, path.lastIndexOf('/'));
+    var url  = base + '/textes/' + fichier + '.html';
     window.open(url, '_blank');
 }
 </script>
